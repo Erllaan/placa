@@ -2,86 +2,156 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8" />
-<title>Placas com Filtro e Exportação PDF</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Placas com Filtros Avançados e Exportação PDF</title>
+
+<!-- Choices.js CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+
 <style>
   @page {
     size: A4 landscape;
-    margin: 10mm 15mm 10mm 15mm;
+    margin: 10mm 15mm;
   }
   body {
-    font-family: "Keio", "Helvetica Neue", Arial, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f5f7fa;
+    color: #222;
     margin: 20px;
-    background: #fff;
-    color: #000;
+  }
+  h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-weight: 700;
+    color: #2c3e50;
+  }
+  .filtros {
+    max-width: 900px;
+    margin: 0 auto 30px auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: center;
+    justify-content: center;
   }
   label {
-    font-weight: bold;
-    margin-right: 10px;
+    font-weight: 600;
+    color: #34495e;
   }
   select, input[type="text"] {
     font-size: 16px;
-    padding: 5px 10px;
-    margin-right: 20px;
+    padding: 8px 12px;
+    border: 2px solid #ddd;
+    border-radius: 6px;
+    min-width: 200px;
+    transition: border-color 0.3s ease;
+  }
+  select:focus, input[type="text"]:focus, .choices__inner {
+    border-color: #3498db;
+    outline: none;
+    box-shadow: 0 0 6px rgba(52, 152, 219, 0.4);
+  }
+  .choices__inner {
+    min-width: 250px;
+    border-radius: 6px;
   }
   button {
+    background: #3498db;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-weight: 600;
     font-size: 16px;
-    padding: 6px 12px;
+    border-radius: 6px;
     cursor: pointer;
-    margin-right: 10px;
+    transition: background-color 0.3s ease;
+    user-select: none;
+  }
+  button:hover {
+    background: #2980b9;
   }
   #placas {
-    margin-top: 30px;
+    max-width: 900px;
+    margin: 0 auto;
   }
   .page {
     width: 297mm;
     height: 210mm;
+    background: white;
     box-sizing: border-box;
+    border-radius: 8px;
+    padding: 2rem;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     page-break-after: always;
-    border: 1px solid transparent; /* evita quebra estranha */
+    box-shadow: 0 4px 15px rgb(0 0 0 / 0.1);
     text-align: center;
-    background: white;
   }
   .rota {
     font-weight: 900;
-    font-size: 9vw;
+    font-size: 10vw;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    margin-bottom: 0.4em;
+    margin-bottom: 0.5em;
     max-width: 90%;
     word-wrap: break-word;
+    color: #2c3e50;
   }
   .loja {
     font-weight: 800;
-    font-size: 7vw;
+    font-size: 8vw;
     max-width: 90%;
     word-wrap: break-word;
+    color: #34495e;
+  }
+  /* Responsive to smaller screens */
+  @media(max-width: 1024px) {
+    .page {
+      width: 100vw;
+      height: auto;
+      padding: 3rem 1.5rem;
+      box-shadow: none;
+      page-break-after: auto;
+    }
+    .rota {
+      font-size: 12vw;
+    }
+    .loja {
+      font-size: 9vw;
+    }
   }
 </style>
 </head>
 <body>
 
-<h1>Placas - Filtro e Exportação PDF</h1>
+<h1>Placas - Filtros e Exportação PDF</h1>
 
-<div>
-  <label for="filtroRota">Filtrar por Rota:</label>
-  <select id="filtroRota">
-    <option value="">Todas as Rotas</option>
-  </select>
+<div class="filtros">
+  <div>
+    <label for="filtroRota">Filtrar por Rota:</label><br />
+    <select id="filtroRota" aria-label="Filtro de rota">
+      <option value="">Todas as Rotas</option>
+    </select>
+  </div>
 
-  <label for="filtroLoja">Filtrar por Loja:</label>
-  <input type="text" id="filtroLoja" placeholder="Digite parte do nome da loja..." />
+  <div style="min-width: 300px;">
+    <label for="filtroLoja">Filtrar por Loja (múltiplas):</label><br />
+    <select id="filtroLoja" multiple></select>
+  </div>
 
-  <button id="btnLimpar">Limpar filtros</button>
-  <button id="btnExportar">Exportar PDF</button>
+  <div style="display:flex; align-items:flex-end; gap:10px;">
+    <button id="btnLimpar" title="Limpar filtros">Limpar filtros</button>
+    <button id="btnExportar" title="Exportar placas filtradas em PDF">Exportar PDF</button>
+  </div>
 </div>
 
 <div id="placas"></div>
 
-<!-- Bibliotecas jsPDF e html2canvas -->
+<!-- Bibliotecas Choices.js -->
+<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+<!-- jsPDF e html2canvas para exportar PDF -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
@@ -89,7 +159,6 @@
 (() => {
   const { jsPDF } = window.jspdf;
 
-  // Dados das placas (rota, código loja, nome loja)
   const placasData = [
     {rota:"6", codigo:"VD825", nome:"DSP JEQUIE"},
     {rota:"6", codigo:"VD992", nome:"DSP VITORIA DA CONQUISTA"},
@@ -204,13 +273,26 @@
     {rota:"5", codigo:"L2582", nome:"DSP SHOPPING RIVER"},
   ];
 
+  // DOM elements
   const selectRota = document.getElementById("filtroRota");
-  const inputLoja = document.getElementById("filtroLoja");
+  const selectLoja = document.getElementById("filtroLoja");
   const placasDiv = document.getElementById("placas");
   const btnLimpar = document.getElementById("btnLimpar");
   const btnExportar = document.getElementById("btnExportar");
 
-  // Preenche select das rotas (ordenadas e únicas)
+  // Initialize Choices.js on loja multi-select
+  const choicesLoja = new Choices(selectLoja, {
+    removeItemButton: true,
+    searchPlaceholderValue: "Digite para buscar lojas...",
+    noResultsText: "Nenhuma loja encontrada",
+    itemSelectText: "Clique para selecionar",
+    placeholder: true,
+    placeholderValue: "Selecione ou digite lojas...",
+    searchResultLimit: 50,
+    shouldSort: true,
+  });
+
+  // Populate rotas dropdown
   function popularRotas() {
     const rotas = [...new Set(placasData.map(p => p.rota))].sort((a,b) => Number(a)-Number(b));
     rotas.forEach(r => {
@@ -221,78 +303,108 @@
     });
   }
 
-  // Cria placa HTML
+  // Populate lojas in Choices.js (unique sorted by nome)
+  function popularLojas() {
+    const lojasUnicas = [...new Map(placasData.map(p => [p.nome, p])).values()];
+    // Ordenar por nome da loja
+    lojasUnicas.sort((a,b) => a.nome.localeCompare(b.nome));
+    // Adicionar opções ao select
+    lojasUnicas.forEach(loja => {
+      choicesLoja.setChoices(
+        [{value: loja.nome, label: `${loja.codigo} – ${loja.nome}`, selected: false}], 
+        'value', 'label', false
+      );
+    });
+  }
+
+  // Criar placa HTML
   function criarPlaca(p) {
     const div = document.createElement("div");
     div.className = "page";
-    div.innerHTML = `<div class="rota">ROTA ${p.rota}</div><div class="loja">${p.codigo} – ${p.nome}</div>`;
+    div.innerHTML = `<div class="rota">ROTA ${p.rota}</div><div class="loja">${p.codigo} - ${p.nome}</div>`;
     return div;
   }
 
-  // Atualiza placas exibidas conforme filtros
-  function atualizarPlacas() {
+  // Renderizar placas filtradas
+  function renderizarPlacas() {
     placasDiv.innerHTML = "";
-    const rotaSelecionada = selectRota.value.trim();
-    const textoLoja = inputLoja.value.trim().toLowerCase();
 
-    const filtrados = placasData.filter(p => {
-      const rotaMatch = rotaSelecionada ? p.rota === rotaSelecionada : true;
-      const lojaMatch = p.nome.toLowerCase().includes(textoLoja);
-      return rotaMatch && lojaMatch;
+    const rotaSelecionada = selectRota.value;
+    const lojasSelecionadas = choicesLoja.getValue(true); // array de nomes selecionados
+
+    const placasFiltradas = placasData.filter(p => {
+      const rotaOK = !rotaSelecionada || p.rota === rotaSelecionada;
+      const lojaOK = lojasSelecionadas.length === 0 || lojasSelecionadas.includes(p.nome);
+      return rotaOK && lojaOK;
     });
 
-    if(filtrados.length === 0){
-      placasDiv.textContent = "Nenhuma placa encontrada para os filtros aplicados.";
+    if(placasFiltradas.length === 0) {
+      placasDiv.innerHTML = `<p style="text-align:center; font-weight:600; color:#777;">Nenhuma placa encontrada para os filtros selecionados.</p>`;
       return;
     }
 
-    filtrados.forEach(p => {
+    placasFiltradas.forEach(p => {
       placasDiv.appendChild(criarPlaca(p));
     });
   }
 
-  // Limpa filtros e mostra tudo
+  // Limpar filtros
   btnLimpar.addEventListener("click", () => {
     selectRota.value = "";
-    inputLoja.value = "";
-    atualizarPlacas();
+    choicesLoja.clearStore();
+    renderizarPlacas();
   });
 
-  selectRota.addEventListener("change", atualizarPlacas);
-  inputLoja.addEventListener("input", atualizarPlacas);
-
-  // Exporta o que está visível em PDF, página por página
+  // Exportar para PDF
   btnExportar.addEventListener("click", async () => {
-    if(!placasDiv.hasChildNodes()){
-      alert("Não há placas para exportar.");
+    const placasFiltradas = placasDiv.querySelectorAll(".page");
+    if(placasFiltradas.length === 0) {
+      alert("Nenhuma placa para exportar!");
       return;
     }
+    
     const pdf = new jsPDF({
+      orientation: "landscape",
       unit: "mm",
       format: "a4",
-      orientation: "landscape"
     });
 
-    const paginas = placasDiv.querySelectorAll(".page");
-    for(let i=0; i<paginas.length; i++) {
-      const page = paginas[i];
-      // Remove scroll pra capturar toda página
-      page.style.overflow = 'visible';
-      // Usa html2canvas pra transformar em imagem
-      const canvas = await html2canvas(page, {scale: 2, backgroundColor: "#fff"});
+    for(let i = 0; i < placasFiltradas.length; i++) {
+      const placa = placasFiltradas[i];
+      // Usar html2canvas para capturar a placa como imagem
+      const canvas = await html2canvas(placa, {scale: 2});
       const imgData = canvas.toDataURL("image/png");
+
       const imgProps = pdf.getImageProperties(imgData);
       const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+
+      // Ajustar imagem para preencher a página mantendo proporção
+      let width, height;
+      if(imgProps.width > imgProps.height) {
+        width = pdfWidth;
+        height = (imgProps.height * pdfWidth) / imgProps.width;
+      } else {
+        height = pdfHeight;
+        width = (imgProps.width * pdfHeight) / imgProps.height;
+      }
+
       if(i > 0) pdf.addPage();
-      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      pdf.addImage(imgData, 'PNG', (pdfWidth - width) / 2, (pdfHeight - height) / 2, width, height);
     }
+
     pdf.save("placas_filtradas.pdf");
   });
 
-  // Inicializa
+  // Eventos filtros
+  selectRota.addEventListener("change", renderizarPlacas);
+  selectLoja.addEventListener("change", renderizarPlacas);
+
+  // Inicialização
   popularRotas();
-  atualizarPlacas();
+  popularLojas();
+  renderizarPlacas();
+
 })();
 </script>
 
