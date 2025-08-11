@@ -2,170 +2,220 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Placas - Rotas</title>
 <style>
-  @media print {
-    @page { size: A4 landscape; margin: 20mm; }
-    body { -webkit-print-color-adjust: exact; }
+  @page {
+    size: A4 landscape;
+    margin: 10mm 15mm 10mm 15mm;
   }
-  html,body {
-    height: 100%;
+  html, body {
     margin: 0;
-    font-family: "Keio", "Helvetica Neue", Arial, "Segoe UI", "Roboto", sans-serif;
-    background: #fff;
-    color: #000;
+    padding: 0;
+    height: 100%;
+    font-family: "Keio", "Helvetica Neue", Arial, sans-serif;
+    background: white;
+    color: black;
   }
   .page {
     width: 297mm;
     height: 210mm;
     box-sizing: border-box;
-    padding: 0;
-    page-break-after: always;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .placa {
-    width: 100%;
-    height: 100%;
     display: flex;
     flex-direction: column;
-    align-items: center;
     justify-content: center;
+    align-items: center;
+    page-break-after: always;
+    margin: 0;
+    padding: 0;
     text-align: center;
   }
   .rota {
     font-weight: 900;
+    font-size: 9vw; /* responsivo grande */
     text-transform: uppercase;
-    letter-spacing: 1px;
-    margin: 0;
-    font-size: calc(56px + 3vmin);
+    letter-spacing: 0.1em;
+    margin-bottom: 0.4em;
+    word-wrap: break-word;
+    max-width: 90%;
   }
   .loja {
     font-weight: 800;
-    margin: 0.4rem 0 0 0;
-    font-size: calc(36px + 2vmin);
+    font-size: 7vw; /* responsivo grande */
+    word-wrap: break-word;
+    max-width: 90%;
   }
 </style>
 </head>
 <body>
 
-<div id="pagesContainer">
+<!-- Aqui começa o conteúdo, uma página por filial -->
 
-<div class="page"><div class="placa"><h1 class="rota">ROTA 6</h1><h2 class="loja">VD825 – DSP JEQUIE</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 6</h1><h2 class="loja">VD992 – DSP VITORIA DA CONQUISTA</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 6</h1><h2 class="loja">L2437 – DSP VITORIA DA CONQUISTA II</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 6</h1><h2 class="loja">L2527 – DSP VITORIA DA CONQUISTA JURACY</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 6</h1><h2 class="loja">VD863 – DSP BARREIRAS</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 6</h1><h2 class="loja">VD862 – DSP LUIS EDUARDO MAGALHAES</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 6</h1><h2 class="loja">L2554 – DSP ITABUNA III</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 6</h1><h2 class="loja">L2290 – DSP LUIS EDUARDO MAGALHAES II</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 6</h1><h2 class="loja">L2291 – DSP SANTO ANTONIO DE JESUS</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 6</h1><h2 class="loja">L2412 – DSP ILHEUS</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 7</h1><h2 class="loja">L2662 – DSP SHOPPING BOULEVARD</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 7</h1><h2 class="loja">L2127 – DSP FEIRA DE SANTANA IV</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 7</h1><h2 class="loja">VD390 – DSP FEIRA DE SANTANA</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 7</h1><h2 class="loja">L2116 – DSP FEIRA DE SANTANA III</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 7</h1><h2 class="loja">VD630 – DSP DIAS DAVILA</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 7</h1><h2 class="loja">VD552 – DSP CAMACARI</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 7</h1><h2 class="loja">L2531 – DSP GUARAJUBA</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 8</h1><h2 class="loja">L2204 – DSP SHOPPING CENTER LAPA</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 8</h1><h2 class="loja">L2538 – DSP SALVADOR 1</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 8</h1><h2 class="loja">L2052 – DSP METRO SALVADOR</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 8</h1><h2 class="loja">L2283 – DSP SHOPPING VITORIA BOULEVARD</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 8</h1><h2 class="loja">L2161 – DSP CANELA II</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 8</h1><h2 class="loja">VD395 – DSP CANELA</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 8</h1><h2 class="loja">L2064 – DSP SALVADOR CHAME CHAME</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 9</h1><h2 class="loja">L2173 – DSP PARQUE SHOPPING BAHIA</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 9</h1><h2 class="loja">L2119 – DSP ESTRADA DO COCO</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 9</h1><h2 class="loja">L2363 – DSP VILAS DO ATLANTICO I</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 9</h1><h2 class="loja">L2668 – DSP ALPHAVILLE LITORAL NORTE</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 9</h1><h2 class="loja">VD547 – DSP ITAPUA</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 9</h1><h2 class="loja">VD458 – DSP ITAPUA II</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 9</h1><h2 class="loja">VD744 – DSP PIATA</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 9</h1><h2 class="loja">VD737 – DSP PATAMARES</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 9</h1><h2 class="loja">VD546 – DSP JORGE AMADO</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 10</h1><h2 class="loja">L2003 – DSP TROBOGY</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 10</h1><h2 class="loja">VD834 – DSP SAO RAFAEL</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 10</h1><h2 class="loja">L2174 – DSP SHOPPING PARALELA</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 10</h1><h2 class="loja">VD845 – DSP CAJAZEIRAS</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 10</h1><h2 class="loja">L2221 – DSP PERIPERI</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 10</h1><h2 class="loja">VD643 – DSP SIMOES FILHO</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 10</h1><h2 class="loja">VD620 – DSP CANDEIAS</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 11</h1><h2 class="loja">L2077 – DSP SHOPPING BELLA VISTA</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 11</h1><h2 class="loja">L2211 – DSP PERNAMBUES</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 11</h1><h2 class="loja">VD544 – DSP MATATU</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 11</h1><h2 class="loja">VD929 – DSP ACUPE DE BROTAS</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 11</h1><h2 class="loja">L2631 – DSP BROTAS III</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 11</h1><h2 class="loja">VD399 – DSP NOVA BROTAS</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 11</h1><h2 class="loja">VD981 – DSP VASCO DA GAMA</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 11</h1><h2 class="loja">L2277 – DSP FEDERACAO SALVADOR</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 11</h1><h2 class="loja">VD397 – DSP ONDINA</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 12</h1><h2 class="loja">L2243 – DSP SHOPPING BARRA SALVADOR</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 12</h1><h2 class="loja">L2088 – DSP RIO VERMELHO II</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 12</h1><h2 class="loja">VD432 – DSP PITUBA III</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 12</h1><h2 class="loja">L2056 – DSP PITUBA IV</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 12</h1><h2 class="loja">VD890 – DSP CAMINHO DAS ARVORES II</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 12</h1><h2 class="loja">VD712 – DSP ANITA GARIBALDI</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 12</h1><h2 class="loja">VD398 – DSP MIGUEL CALMON</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 12</h1><h2 class="loja">L2191 – DSP MARES</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 13</h1><h2 class="loja">VD697 – DSP IMBUI</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 13</h1><h2 class="loja">VD550 – DSP COSTA AZUL</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 13</h1><h2 class="loja">L2123 – DSP COSTA AZUL II</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 13</h1><h2 class="loja">VD936 – DSP STIEP</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 13</h1><h2 class="loja">VD393 – DSP CABULA</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 13</h1><h2 class="loja">VD821 – DSP SALVADOR III</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 14</h1><h2 class="loja">VD530 – DSP LAURO DE FREITAS</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 14</h1><h2 class="loja">VD558 – DSP STELLA MARIS</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 15</h1><h2 class="loja">VD926 – DSP CABULA II</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 15</h1><h2 class="loja">L2169 – DSP CANDEAL</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 15</h1><h2 class="loja">L2093 – DSP SHOPPING DA BAHIA 3 PISO</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 15</h1><h2 class="loja">L2092 – DSP SHOPPING DA BAHIA 2 PISO</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 15</h1><h2 class="loja">L2091 – DSP SHOPPING DA BAHIA 1 PISO</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 16</h1><h2 class="loja">VD713 – DSP LARGO DO TAMARINEIRO</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 16</h1><h2 class="loja">VD970 – DSP CAMINHO DE AREIA</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 16</h1><h2 class="loja">VD604 – DSP GRACA</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 16</h1><h2 class="loja">VD220 – DSP PITUBA</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 16</h1><h2 class="loja">VD434 – DSP ALTO DO ITAIGARA</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 16</h1><h2 class="loja">VD568 – DSP CAMINHO DAS ARVORES</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 20</h1><h2 class="loja">VD913 – DSP CAMINHO DAS ARVORES III</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 20</h1><h2 class="loja">VD435 – DSP SHOPPING SALVADOR</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 20</h1><h2 class="loja">L2280 – DSP ALPHAVILLE SALVADOR 1</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 1</h1><h2 class="loja">L2507 – DSP SHOPPING PATTEO OLINDA</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 1</h1><h2 class="loja">L2526 – DSP SHOPPING CARUARU</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 1</h1><h2 class="loja">L2438 – DSP CARUARU II</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 1</h1><h2 class="loja">L2384 – DSP VITORIA DE SANTO ANTAO</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 1</h1><h2 class="loja">VD794 – DSP JANGA</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 1</h1><h2 class="loja">VD871 – DSP OLINDA II</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 2</h1><h2 class="loja">VD698 – DSP OLINDA</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 2</h1><h2 class="loja">L2493 – DSP ESPINHEIRO</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 2</h1><h2 class="loja">VD288 – DSP RECIFE CENTRO II</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 2</h1><h2 class="loja">L2589 – DSP IPUTINGA</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 2</h1><h2 class="loja">L2368 – DSP CAXANGA</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 2</h1><h2 class="loja">L2386 – DSP IMBIRIBEIRA</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 2</h1><h2 class="loja">L2421 – DSP IPSEP</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 3</h1><h2 class="loja">VD772 – DSP BOA VIAGEM</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 3</h1><h2 class="loja">L2617 – DPSP CONSELHEIRO AGUIAR III</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 3</h1><h2 class="loja">VD755 – DSP BOA VIAGEM II</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 3</h1><h2 class="loja">L2534 – DSP DOMINGOS FERREIRA</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 3</h1><h2 class="loja">L2453 – DSP RIBEIRO DE BRITO</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 3</h1><h2 class="loja">VD770 – DSP BOA VIAGEM V</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 3</h1><h2 class="loja">L2597 – DSP SETUBAL</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 3</h1><h2 class="loja">VD767 – DSP GUARARAPES III</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 4</h1><h2 class="loja">L2371 – DSP ROSA E SILVA</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 4</h1><h2 class="loja">L2375 – DSP ESTRADA DO ARRAIAL</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 4</h1><h2 class="loja">VD695 – DSP TORRE</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 4</h1><h2 class="loja">L2383 – DSP MADALENA II</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 4</h1><h2 class="loja">L2074 – DSP SHOPPING RIOMAR</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 4</h1><h2 class="loja">VD690 – DSP BOA VIAGEM IV</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 4</h1><h2 class="loja">L2508 – DSP SHOPPING RECIFE</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 5</h1><h2 class="loja">L2428 – DSP PETROLINA</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 5</h1><h2 class="loja">L2429 – DSP PETROLINA CENTRO</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 5</h1><h2 class="loja">L2496 – DSP PETROLINA II</h2></div></div>
-<div class="page"><div class="placa"><h1 class="rota">ROTA 5</h1><h2 class="loja">L2582 – DSP SHOPPING RIVER</h2></div></div>
-
+<div class="page">
+  <div class="rota">ROTA 6</div>
+  <div class="loja">VD825 – DSP JEQUIE</div>
 </div>
+
+<div class="page">
+  <div class="rota">ROTA 6</div>
+  <div class="loja">VD992 – DSP VITORIA DA CONQUISTA</div>
+</div>
+
+<div class="page">
+  <div class="rota">ROTA 6</div>
+  <div class="loja">L2437 – DSP VITORIA DA CONQUISTA II</div>
+</div>
+
+<div class="page">
+  <div class="rota">ROTA 6</div>
+  <div class="loja">L2527 – DSP VITORIA DA CONQUISTA JURACY</div>
+</div>
+
+<div class="page">
+  <div class="rota">ROTA 6</div>
+  <div class="loja">VD863 – DSP BARREIRAS</div>
+</div>
+
+<div class="page">
+  <div class="rota">ROTA 6</div>
+  <div class="loja">VD862 – DSP LUIS EDUARDO MAGALHAES</div>
+</div>
+
+<div class="page">
+  <div class="rota">ROTA 6</div>
+  <div class="loja">L2554 – DSP ITABUNA III</div>
+</div>
+
+<div class="page">
+  <div class="rota">ROTA 6</div>
+  <div class="loja">L2290 – DSP LUIS EDUARDO MAGALHAES II</div>
+</div>
+
+<div class="page">
+  <div class="rota">ROTA 6</div>
+  <div class="loja">L2291 – DSP SANTO ANTONIO DE JESUS</div>
+</div>
+
+<div class="page">
+  <div class="rota">ROTA 6</div>
+  <div class="loja">L2412 – DSP ILHEUS</div>
+</div>
+
+<div class="page">
+  <div class="rota">ROTA 7</div>
+  <div class="loja">L2662 – DSP SHOPPING BOULEVARD</div>
+</div>
+
+<div class="page">
+  <div class="rota">ROTA 7</div>
+  <div class="loja">L2127 – DSP FEIRA DE SANTANA IV</div>
+</div>
+
+<div class="page">
+  <div class="rota">ROTA 7</div>
+  <div class="loja">VD390 – DSP FEIRA DE SANTANA</div>
+</div>
+
+<div class="page">
+  <div class="rota">ROTA 7</div>
+  <div class="loja">L2116 – DSP FEIRA DE SANTANA III</div>
+</div>
+
+<div class="page">
+  <div class="rota">ROTA 7</div>
+  <div class="loja">VD630 – DSP DIAS DAVILA</div>
+</div>
+
+<div class="page">
+  <div class="rota">ROTA 7</div>
+  <div class="loja">VD552 – DSP CAMACARI</div>
+</div>
+
+<div class="page">
+  <div class="rota">ROTA 7</div>
+  <div class="loja">L2531 – DSP GUARAJUBA</div>
+</div>
+
+<div class="page">
+  <div class="rota">ROTA 8</div>
+  <div class="loja">L2204 – DSP SHOPPING CENTER LAPA</div>
+</div>
+
+<div class="page">
+  <div class="rota">ROTA 8</div>
+  <div class="loja">L2538 – DSP SALVADOR 1</div>
+</div>
+
+<div class="page">
+  <div class="rota">ROTA 8</div>
+  <div class="loja">L2052 – DSP METRO SALVADOR</div>
+</div>
+
+<div class="page">
+  <div class="rota">ROTA 8</div>
+  <div class="loja">L2283 – DSP SHOPPING VITORIA BOULEVARD</div>
+</div>
+
+<div class="page">
+  <div class="rota">ROTA 8</div>
+  <div class="loja">L2161 – DSP CANELA II</div>
+</div>
+
+<div class="page">
+  <div class="rota">ROTA 8</div>
+  <div class="loja">VD395 – DSP CANELA</div>
+</div>
+
+<div class="page">
+  <div class="rota">ROTA 8</div>
+  <div class="loja">L2064 – DSP SALVADOR CHAME CHAME</div>
+</div>
+
+<div class="page">
+  <div class="rota">ROTA 9</div>
+  <div class="loja">L2173 – DSP PARQUE SHOPPING BAHIA</div>
+</div>
+
+<div class="page">
+  <div class="rota">ROTA 9</div>
+  <div class="loja">L2119 – DSP ESTRADA DO COCO</div>
+</div>
+
+<div class="page">
+  <div class="rota">ROTA 9</div>
+  <div class="loja">L2363 – DSP VILAS DO ATLANTICO I</div>
+</div>
+
+<div class="page">
+  <div class="rota">ROTA 9</div>
+  <div class="loja">L2668 – DSP ALPHAVILLE LITORAL NORTE</div>
+</div>
+
+<div class="page">
+  <div class="rota">ROTA 9</div>
+  <div class="loja">VD547 – DSP ITAPUA</div>
+</div>
+
+<div class="page">
+  <div class="rota">ROTA 9</div>
+  <div class="loja">VD458 – DSP ITAPUA II</div>
+</div>
+
+<div class="page">
+  <div class="rota">ROTA 9</div>
+  <div class="loja">VD744 – DSP PIATA</div>
+</div>
+
+<div class="page">
+  <div class="rota">ROTA 9</div>
+  <div class="loja">VD737 – DSP PATAMARES</div>
+</div>
+
+<div class="page">
+  <div class="rota">ROTA 9</div>
+  <div class="loja">VD546 – DSP JORGE AMADO</div>
+</div>
+
+<!-- Continue para todas as filiais seguindo o mesmo padrão -->
 
 </body>
 </html>
