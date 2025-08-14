@@ -90,6 +90,12 @@
         .placa-preview .loja { font-size: 1.5rem; }
         .placa-preview .observacao { font-size: 1.1rem; }
 
+        /* Estilos específicos para o modo de impressão do html2canvas */
+        .print-mode .rota { font-size: 120pt !important; }
+        .print-mode .loja { font-size: 90pt !important; }
+        .print-mode .observacao { font-size: 60pt !important; }
+
+
         /* Botão de Editar na Placa */
         .btn-editar-placa {
             position: absolute;
@@ -949,6 +955,10 @@
             for (let i = 0; i < placasParaExportar.length; i++) {
                 const placaElement = placasParaExportar[i];
                 
+                // Aplica estilos de impressão temporariamente
+                placaElement.classList.remove('placa-preview');
+                placaElement.classList.add('print-mode');
+                
                 const rotaElement = placaElement.querySelector('.rota');
                 const lojaElement = placaElement.querySelector('.loja');
                 const obsElement = placaElement.querySelector('.observacao');
@@ -960,18 +970,15 @@
                 rotaElement.style.color = 'black';
                 lojaElement.style.color = 'black';
                 if (obsElement) obsElement.style.color = 'black';
-                
-                placaElement.classList.remove('placa-preview');
 
                 const canvas = await html2canvas(placaElement, {
-                    scale: 1, 
-                    width: placaElement.scrollWidth,
-                    height: placaElement.scrollHeight,
+                    scale: 2, // Aumenta a resolução para melhor qualidade
                     useCORS: true
                 });
                 
+                // Restaura os estilos originais
                 placaElement.classList.add('placa-preview');
-
+                placaElement.classList.remove('print-mode');
                 rotaElement.style.color = originalRotaColor;
                 lojaElement.style.color = originalLojaColor;
                 if (obsElement) obsElement.style.color = originalObsColor;
