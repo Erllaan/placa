@@ -91,6 +91,10 @@
         .placa-preview .observacao { font-size: 1.1rem; }
 
         /* Estilos específicos para o modo de impressão do html2canvas */
+        .print-mode {
+            width: 1123px !important; /* A4 landscape em pixels (aprox) */
+            height: 794px !important;
+        }
         .print-mode .rota { font-size: 120pt !important; }
         .print-mode .loja { font-size: 90pt !important; }
         .print-mode .observacao { font-size: 60pt !important; }
@@ -963,6 +967,24 @@
                 const lojaElement = placaElement.querySelector('.loja');
                 const obsElement = placaElement.querySelector('.observacao');
                 
+                // --- INÍCIO DA CORREÇÃO DE TAMANHO ---
+                // Função para ajustar o tamanho da fonte se o texto for muito longo
+                const ajustarFonte = (elemento, tamanhoMax) => {
+                    if (elemento) {
+                        let tamanhoAtual = tamanhoMax;
+                        elemento.style.fontSize = `${tamanhoAtual}pt`;
+                        // A largura de 90% da página em pixels (1123px * 0.9)
+                        while (elemento.scrollWidth > 1010 && tamanhoAtual > 10) {
+                            tamanhoAtual -= 5;
+                            elemento.style.fontSize = `${tamanhoAtual}pt`;
+                        }
+                    }
+                };
+                
+                ajustarFonte(lojaElement, 90);
+                ajustarFonte(obsElement, 60);
+                // --- FIM DA CORREÇÃO DE TAMANHO ---
+                
                 const originalRotaColor = rotaElement.style.color;
                 const originalLojaColor = lojaElement.style.color;
                 const originalObsColor = obsElement ? obsElement.style.color : '';
@@ -982,6 +1004,10 @@
                 rotaElement.style.color = originalRotaColor;
                 lojaElement.style.color = originalLojaColor;
                 if (obsElement) obsElement.style.color = originalObsColor;
+                // Limpa os estilos de fonte aplicados dinamicamente
+                lojaElement.style.fontSize = '';
+                if (obsElement) obsElement.style.fontSize = '';
+
 
                 const imgData = canvas.toDataURL('image/png');
 
