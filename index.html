@@ -1,412 +1,1076 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Placas com Filtros Avançados e Exportação PDF</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gerenciador de Placas com Análise</title>
 
-<!-- Choices.js CSS -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+    <!-- Choices.js CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
 
-<style>
-  @page {
-    size: A4 landscape;
-    margin: 10mm 15mm;
-  }
-  body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #f5f7fa;
-    color: #222;
-    margin: 20px;
-  }
-  h1 {
-    text-align: center;
-    margin-bottom: 20px;
-    font-weight: 700;
-    color: #2c3e50;
-  }
-  .filtros {
-    max-width: 900px;
-    margin: 0 auto 30px auto;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-    align-items: center;
-    justify-content: center;
-  }
-  label {
-    font-weight: 600;
-    color: #34495e;
-  }
-  select, input[type="text"] {
-    font-size: 16px;
-    padding: 8px 12px;
-    border: 2px solid #ddd;
-    border-radius: 6px;
-    min-width: 200px;
-    transition: border-color 0.3s ease;
-  }
-  select:focus, input[type="text"]:focus, .choices__inner {
-    border-color: #3498db;
-    outline: none;
-    box-shadow: 0 0 6px rgba(52, 152, 219, 0.4);
-  }
-  .choices__inner {
-    min-width: 250px;
-    border-radius: 6px;
-  }
-  button {
-    background: #3498db;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    font-weight: 600;
-    font-size: 16px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    user-select: none;
-  }
-  button:hover {
-    background: #2980b9;
-  }
-  #placas {
-    max-width: 900px;
-    margin: 0 auto;
-  }
-  .page {
-    width: 297mm;
-    height: 210mm;
-    background: white;
-    box-sizing: border-box;
-    border-radius: 8px;
-    padding: 2rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    page-break-after: always;
-    box-shadow: 0 4px 15px rgb(0 0 0 / 0.1);
-    text-align: center;
-  }
-  .rota {
-    font-weight: 900;
-    font-size: 10vw;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    margin-bottom: 0.5em;
-    max-width: 90%;
-    word-wrap: break-word;
-    color: #2c3e50;
-  }
-  .loja {
-    font-weight: 800;
-    font-size: 8vw;
-    max-width: 90%;
-    word-wrap: break-word;
-    color: #34495e;
-  }
-  /* Responsive to smaller screens */
-  @media(max-width: 1024px) {
-    .page {
-      width: 100vw;
-      height: auto;
-      padding: 3rem 1.5rem;
-      box-shadow: none;
-      page-break-after: auto;
-    }
-    .rota {
-      font-size: 12vw;
-    }
-    .loja {
-      font-size: 9vw;
-    }
-  }
-</style>
+    <style>
+        /* Estilos para a impressão e layout geral */
+        @page {
+            size: A4 landscape;
+            margin: 10mm 15mm;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f1f5f9; /* slate-100 */
+            color: #334155; /* slate-700 */
+        }
+        
+        /* Estilos para as placas (impressão e visualização) */
+        #placas {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+        .page {
+            width: 297mm;
+            height: 210mm;
+            background: white;
+            box-sizing: border-box;
+            border-radius: 8px;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            page-break-after: always;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            text-align: center;
+            border: 1px solid #e2e8f0; /* slate-200 */
+            position: relative; /* Necessário para o botão de editar */
+        }
+        .rota {
+            font-weight: 900;
+            font-size: 10vw;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5em;
+            max-width: 90%;
+            word-wrap: break-word;
+            color: #1e293b; /* slate-800 */
+        }
+        .loja {
+            font-weight: 700;
+            font-size: 8vw;
+            max-width: 90%;
+            word-wrap: break-word;
+            color: #475569; /* slate-600 */
+        }
+        .observacao {
+            font-weight: 600;
+            font-size: 5vw;
+            margin-top: 1em;
+            max-width: 90%;
+            word-wrap: break-word;
+            color: #64748b; /* slate-500 */
+        }
+
+        /* Ajustes para quando as placas são exibidas na tela (não impressão) */
+        .placa-preview {
+            width: 100%;
+            height: 280px; /* Altura aumentada para caber a observação */
+            font-size: 1rem;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .placa-preview:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.07);
+        }
+        .placa-preview .rota { font-size: 2.5rem; }
+        .placa-preview .loja { font-size: 1.5rem; }
+        .placa-preview .observacao { font-size: 1.1rem; }
+
+        /* Botão de Editar na Placa */
+        .btn-editar-placa {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border: 1px solid #e2e8f0;
+            border-radius: 9999px;
+            padding: 8px;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.2s ease-in-out;
+            backdrop-filter: blur(4px);
+        }
+        .placa-preview:hover .btn-editar-placa {
+            opacity: 1;
+        }
+        @media print {
+            .btn-editar-placa {
+                display: none;
+            }
+        }
+        
+        /* Spinner de Carregamento */
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border-left-color: #4f46e5; /* indigo-600 */
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+
+        /* Estilos do modal de gerenciamento */
+        .lista-lojas-gerenciar {
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-top: 15px;
+        }
+        .lista-lojas-gerenciar div {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .lista-lojas-gerenciar div:last-child { border-bottom: none; }
+        .lista-lojas-gerenciar button {
+            padding: 5px 10px;
+            font-size: 14px;
+            color: white;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+        }
+        .lista-lojas-gerenciar .btn-editar { background-color: #f59e0b; } /* amber-500 */
+        .lista-lojas-gerenciar .btn-deletar { background-color: #ef4444; } /* red-500 */
+
+        /* Media queries para responsividade */
+        @media(max-width: 1024px) {
+            .page {
+                width: 100%;
+                height: auto;
+                box-shadow: none;
+                page-break-after: auto;
+            }
+            #placas {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
-<body>
+<body class="p-4 md:p-8">
 
-<h1>Placas - Filtros e Exportação PDF</h1>
+    <div class="max-w-7xl mx-auto">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-slate-800">Gerenciador de Placas</h1>
+            <p class="text-slate-500 mt-2">Filtre, gerencie e exporte as placas das lojas com facilidade.</p>
+        </header>
 
-<div class="filtros">
-  <div>
-    <label for="filtroRota">Filtrar por Rota:</label><br />
-    <select id="filtroRota" aria-label="Filtro de rota">
-      <option value="">Todas as Rotas</option>
-    </select>
-  </div>
+        <!-- Painel de Estatísticas -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex items-center gap-4">
+                <div class="bg-blue-100 p-3 rounded-full"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-500"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+                <div>
+                    <p class="text-slate-500 text-sm">Total de Lojas</p>
+                    <p id="statTotalLojas" class="text-2xl font-bold text-slate-800">0</p>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex items-center gap-4">
+                <div class="bg-green-100 p-3 rounded-full"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+                <div>
+                    <p class="text-slate-500 text-sm">Total de Rotas</p>
+                    <p id="statTotalRotas" class="text-2xl font-bold text-slate-800">0</p>
+                </div>
+            </div>
+             <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex items-center gap-4">
+                <div class="bg-amber-100 p-3 rounded-full"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-amber-500"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 18.14l-5-4.87 6.91-1.01L12 2z"/></svg></div>
+                <div>
+                    <p class="text-slate-500 text-sm">Rota com Mais Lojas</p>
+                    <p id="statRotaMaisLojas" class="text-2xl font-bold text-slate-800">-</p>
+                </div>
+            </div>
+        </div>
 
-  <div style="min-width: 300px;">
-    <label for="filtroLoja">Filtrar por Loja (múltiplas):</label><br />
-    <select id="filtroLoja" multiple></select>
-  </div>
+        <!-- Cards de Controle -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            <!-- Card de Filtros e Busca -->
+            <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <h2 class="text-xl font-bold mb-4">Filtros e Busca</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label for="filtroRota" class="block text-sm font-medium text-slate-600 mb-1">Filtrar por Rota:</label>
+                        <select id="filtroRota" aria-label="Filtro de rota"></select>
+                    </div>
+                    <div>
+                        <label for="filtroLoja" class="block text-sm font-medium text-slate-600 mb-1">Filtrar por Loja (múltiplas):</label>
+                        <select id="filtroLoja" multiple aria-label="Filtro de loja"></select>
+                    </div>
+                </div>
+                 <div class="mt-4">
+                    <label for="campoBusca" class="block text-sm font-medium text-slate-600 mb-1">Busca Rápida por Nome ou Código:</label>
+                    <div class="flex gap-2">
+                        <input type="text" id="campoBusca" placeholder="Ex: DSP JEQUIE ou VD825" class="w-full border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        <button id="btnBuscar" class="bg-slate-700 text-white px-4 py-2 rounded-md hover:bg-slate-800 transition">Buscar</button>
+                    </div>
+                    <div id="resultadoBusca" class="mt-2 text-sm p-3 bg-slate-50 rounded-md min-h-[50px] flex items-center justify-center">
+                        Resultados da busca aparecerão aqui.
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Card de Ações -->
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col justify-between">
+                <div>
+                    <h2 class="text-xl font-bold mb-4">Ações</h2>
+                    <div class="space-y-3">
+                        <button id="btnGerenciar" class="w-full text-left bg-white border border-slate-300 text-slate-700 px-4 py-3 rounded-md hover:bg-slate-50 transition flex items-center gap-3"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>Gerenciar Lojas</svg></button>
+                        <button id="btnMostrarGrafico" class="w-full text-left bg-white border border-slate-300 text-slate-700 px-4 py-3 rounded-md hover:bg-slate-50 transition flex items-center gap-3"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18.7 8a6 6 0 0 0-6 0"/><path d="M12.7 14a6 6 0 0 0 6 0"/><path d="M6.7 12a6 6 0 0 0 6 0"/></svg>Mostrar Análise Gráfica</button>
+                    </div>
+                </div>
+                <div class="mt-6 border-t pt-4">
+                     <button id="btnLimpar" class="w-full bg-amber-500 text-white px-4 py-3 rounded-md hover:bg-amber-600 transition font-semibold">Limpar Filtros</button>
+                </div>
+            </div>
+        </div>
 
-  <div style="display:flex; align-items:flex-end; gap:10px;">
-    <button id="btnLimpar" title="Limpar filtros">Limpar filtros</button>
-    <button id="btnExportar" title="Exportar placas filtradas em PDF">Exportar PDF</button>
-  </div>
-</div>
+        <!-- Card do Gráfico (oculto por padrão) -->
+        <div id="graficoContainer" class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 mb-8" style="display: none; animation: fadeIn 0.5s;">
+            <h2 class="text-xl font-bold mb-4">Análise Gráfica: Lojas por Rota</h2>
+            <div class="h-96">
+                <canvas id="graficoRotas"></canvas>
+            </div>
+        </div>
 
-<div id="placas"></div>
+        <!-- Seção de Importar/Exportar -->
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 mb-8">
+            <h2 class="text-xl font-bold mb-4">Importar & Exportar Dados</h2>
+            <div class="flex flex-wrap gap-4 items-center">
+                <input type="file" id="csvFileInput" accept=".csv" class="hidden">
+                <button id="btnImportarCSV" class="bg-green-600 text-white px-5 py-2 rounded-md hover:bg-green-700 transition font-semibold">Importar CSV</button>
+                <button id="btnExportarCSV" class="bg-blue-600 text-white px-5 py-2 rounded-md hover:bg-blue-700 transition font-semibold">Exportar para CSV</button>
+                <button id="btnExportarPDF" class="bg-red-600 text-white px-5 py-2 rounded-md hover:bg-red-700 transition font-semibold">Exportar Placas para PDF</button>
+                <button id="btnResetarDados" class="bg-orange-500 text-white px-5 py-2 rounded-md hover:bg-orange-600 transition font-semibold">Resetar Dados Padrão</button>
+            </div>
+        </div>
 
-<!-- Bibliotecas Choices.js -->
-<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
-<!-- jsPDF e html2canvas para exportar PDF -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+        <!-- Área de renderização das placas -->
+        <div id="placas"></div>
+    </div>
 
-<script>
-(() => {
-  const { jsPDF } = window.jspdf;
+    <!-- Modal de Gerenciamento de Lojas -->
+    <div id="modalGerenciamento" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50 overflow-y-auto">
+        <div class="relative top-10 md:top-20 mx-auto p-5 border w-11/12 md:max-w-3xl shadow-lg rounded-md bg-white">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold">Gerenciar Lojas</h2>
+                <span class="close-button cursor-pointer text-3xl">&times;</span>
+            </div>
+            <form id="formLoja" class="flex flex-col gap-4">
+                <input type="hidden" id="formIndex">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="formRota" class="block text-sm font-medium text-gray-700">Rota:</label>
+                        <input type="text" id="formRota" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label for="formCodigo" class="block text-sm font-medium text-gray-700">Código (VD/L):</label>
+                        <input type="text" id="formCodigo" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label for="formNome" class="block text-sm font-medium text-gray-700">Nome da Loja:</label>
+                        <input type="text" id="formNome" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label for="formObservacao" class="block text-sm font-medium text-gray-700">Observação (Opcional):</label>
+                        <input type="text" id="formObservacao" placeholder="Ex: USO E CONSUMO" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                    </div>
+                </div>
+                <div class="flex justify-end mt-4">
+                    <button type="submit" id="btnSalvarLoja" class="bg-blue-600 text-white px-5 py-2 rounded-md hover:bg-blue-700 transition font-semibold">Adicionar Loja</button>
+                </div>
+            </form>
+            <div class="mt-6">
+                <h3 class="text-lg font-bold">Lojas Cadastradas:</h3>
+                <div id="listaLojasGerenciar" class="lista-lojas-gerenciar"></div>
+            </div>
+        </div>
+    </div>
 
-  const placasData = [
-    {rota:"6", codigo:"VD825", nome:"DSP JEQUIE"},
-    {rota:"6", codigo:"VD992", nome:"DSP VITORIA DA CONQUISTA"},
-    {rota:"6", codigo:"L2437", nome:"DSP VITORIA DA CONQUISTA II"},
-    {rota:"6", codigo:"L2527", nome:"DSP VITORIA DA CONQUISTA JURACY"},
-    {rota:"6", codigo:"VD863", nome:"DSP BARREIRAS"},
-    {rota:"6", codigo:"VD862", nome:"DSP LUIS EDUARDO MAGALHAES"},
-    {rota:"6", codigo:"L2554", nome:"DSP ITABUNA III"},
-    {rota:"6", codigo:"L2290", nome:"DSP LUIS EDUARDO MAGALHAES II"},
-    {rota:"6", codigo:"L2291", nome:"DSP SANTO ANTONIO DE JESUS"},
-    {rota:"6", codigo:"L2412", nome:"DSP ILHEUS"},
-    {rota:"7", codigo:"L2662", nome:"DSP SHOPPING BOULEVARD"},
-    {rota:"7", codigo:"L2127", nome:"DSP FEIRA DE SANTANA IV"},
-    {rota:"7", codigo:"VD390", nome:"DSP FEIRA DE SANTANA"},
-    {rota:"7", codigo:"L2116", nome:"DSP FEIRA DE SANTANA III"},
-    {rota:"7", codigo:"VD630", nome:"DSP DIAS DAVILA"},
-    {rota:"7", codigo:"VD552", nome:"DSP CAMACARI"},
-    {rota:"7", codigo:"L2531", nome:"DSP GUARAJUBA"},
-    {rota:"8", codigo:"L2204", nome:"DSP SHOPPING CENTER LAPA"},
-    {rota:"8", codigo:"L2538", nome:"DSP SALVADOR 1"},
-    {rota:"8", codigo:"L2052", nome:"DSP METRO SALVADOR"},
-    {rota:"8", codigo:"L2283", nome:"DSP SHOPPING VITORIA BOULEVARD"},
-    {rota:"8", codigo:"L2161", nome:"DSP CANELA II"},
-    {rota:"8", codigo:"VD395", nome:"DSP CANELA"},
-    {rota:"8", codigo:"L2064", nome:"DSP SALVADOR CHAME CHAME"},
-    {rota:"9", codigo:"L2173", nome:"DSP PARQUE SHOPPING BAHIA"},
-    {rota:"9", codigo:"L2119", nome:"DSP ESTRADA DO COCO"},
-    {rota:"9", codigo:"L2363", nome:"DSP VILAS DO ATLANTICO I"},
-    {rota:"9", codigo:"L2668", nome:"DSP ALPHAVILLE LITORAL NORTE"},
-    {rota:"9", codigo:"VD547", nome:"DSP ITAPUA"},
-    {rota:"9", codigo:"VD458", nome:"DSP ITAPUA II"},
-    {rota:"9", codigo:"VD744", nome:"DSP PIATA"},
-    {rota:"9", codigo:"VD737", nome:"DSP PATAMARES"},
-    {rota:"9", codigo:"VD546", nome:"DSP JORGE AMADO"},
-    {rota:"10", codigo:"L2003", nome:"DSP TROBOGY"},
-    {rota:"10", codigo:"VD834", nome:"DSP SAO RAFAEL"},
-    {rota:"10", codigo:"L2174", nome:"DSP SHOPPING PARALELA"},
-    {rota:"10", codigo:"VD845", nome:"DSP CAJAZEIRAS"},
-    {rota:"10", codigo:"L2221", nome:"DSP PERIPERI"},
-    {rota:"10", codigo:"VD643", nome:"DSP SIMOES FILHO"},
-    {rota:"10", codigo:"VD620", nome:"DSP CANDEIAS"},
-    {rota:"11", codigo:"L2077", nome:"DSP SHOPPING BELLA VISTA"},
-    {rota:"11", codigo:"L2211", nome:"DSP PERNAMBUES"},
-    {rota:"11", codigo:"VD544", nome:"DSP MATATU"},
-    {rota:"11", codigo:"VD929", nome:"DSP ACUPE DE BROTAS"},
-    {rota:"11", codigo:"L2631", nome:"DSP BROTAS III"},
-    {rota:"11", codigo:"VD399", nome:"DSP NOVA BROTAS"},
-    {rota:"11", codigo:"VD981", nome:"DSP VASCO DA GAMA"},
-    {rota:"11", codigo:"L2277", nome:"DSP FEDERACAO SALVADOR"},
-    {rota:"11", codigo:"VD397", nome:"DSP ONDINA"},
-    {rota:"12", codigo:"L2243", nome:"DSP SHOPPING BARRA SALVADOR"},
-    {rota:"12", codigo:"L2088", nome:"DSP RIO VERMELHO II"},
-    {rota:"12", codigo:"VD432", nome:"DSP PITUBA III"},
-    {rota:"12", codigo:"L2056", nome:"DSP PITUBA IV"},
-    {rota:"12", codigo:"VD890", nome:"DSP CAMINHO DAS ARVORES II"},
-    {rota:"12", codigo:"VD712", nome:"DSP ANITA GARIBALDI"},
-    {rota:"12", codigo:"VD398", nome:"DSP MIGUEL CALMON"},
-    {rota:"12", codigo:"L2191", nome:"DSP MARES"},
-    {rota:"13", codigo:"VD697", nome:"DSP IMBUI"},
-    {rota:"13", codigo:"VD550", nome:"DSP COSTA AZUL"},
-    {rota:"13", codigo:"L2123", nome:"DSP COSTA AZUL II"},
-    {rota:"13", codigo:"VD936", nome:"DSP STIEP"},
-    {rota:"13", codigo:"VD393", nome:"DSP CABULA"},
-    {rota:"13", codigo:"VD821", nome:"DSP SALVADOR III"},
-    {rota:"14", codigo:"VD530", nome:"DSP LAURO DE FREITAS"},
-    {rota:"14", codigo:"VD558", nome:"DSP STELLA MARIS"},
-    {rota:"15", codigo:"VD926", nome:"DSP CABULA II"},
-    {rota:"15", codigo:"L2169", nome:"DSP CANDEAL"},
-    {rota:"15", codigo:"L2093", nome:"DSP SHOPPING DA BAHIA 3 PISO"},
-    {rota:"15", codigo:"L2092", nome:"DSP SHOPPING DA BAHIA 2 PISO"},
-    {rota:"15", codigo:"L2091", nome:"DSP SHOPPING DA BAHIA 1 PISO"},
-    {rota:"16", codigo:"VD713", nome:"DSP LARGO DO TAMARINEIRO"},
-    {rota:"16", codigo:"VD970", nome:"DSP CAMINHO DE AREIA"},
-    {rota:"16", codigo:"VD604", nome:"DSP GRACA"},
-    {rota:"16", codigo:"VD220", nome:"DSP PITUBA"},
-    {rota:"16", codigo:"VD434", nome:"DSP ALTO DO ITAIGARA"},
-    {rota:"16", codigo:"VD568", nome:"DSP CAMINHO DAS ARVORES"},
-    {rota:"20", codigo:"VD913", nome:"DSP CAMINHO DAS ARVORES III"},
-    {rota:"20", codigo:"VD435", nome:"DSP SHOPPING SALVADOR"},
-    {rota:"20", codigo:"L2280", nome:"DSP ALPHAVILLE SALVADOR 1"},
-    {rota:"1", codigo:"L2507", nome:"DSP SHOPPING PATTEO OLINDA"},
-    {rota:"1", codigo:"L2526", nome:"DSP SHOPPING CARUARU"},
-    {rota:"1", codigo:"L2438", nome:"DSP CARUARU II"},
-    {rota:"1", codigo:"L2384", nome:"DSP VITORIA DE SANTO ANTAO"},
-    {rota:"1", codigo:"VD794", nome:"DSP JANGA"},
-    {rota:"1", codigo:"VD871", nome:"DSP OLINDA II"},
-    {rota:"2", codigo:"VD698", nome:"DSP OLINDA"},
-    {rota:"2", codigo:"L2493", nome:"DSP ESPINHEIRO"},
-    {rota:"2", codigo:"VD288", nome:"DSP RECIFE CENTRO II"},
-    {rota:"2", codigo:"L2589", nome:"DSP IPUTINGA"},
-    {rota:"2", codigo:"L2368", nome:"DSP CAXANGA"},
-    {rota:"2", codigo:"L2386", nome:"DSP IMBIRIBEIRA"},
-    {rota:"2", codigo:"L2421", nome:"DSP IPSEP"},
-    {rota:"3", codigo:"VD772", nome:"DSP BOA VIAGEM"},
-    {rota:"3", codigo:"L2617", nome:"DPSP CONSELHEIRO AGUIAR III"},
-    {rota:"3", codigo:"VD755", nome:"DSP BOA VIAGEM II"},
-    {rota:"3", codigo:"L2534", nome:"DSP DOMINGOS FERREIRA"},
-    {rota:"3", codigo:"L2453", nome:"DSP RIBEIRO DE BRITO"},
-    {rota:"3", codigo:"VD770", nome:"DSP BOA VIAGEM V"},
-    {rota:"3", codigo:"L2597", nome:"DSP SETUBAL"},
-    {rota:"3", codigo:"VD767", nome:"DSP GUARARAPES III"},
-    {rota:"4", codigo:"L2371", nome:"DSP ROSA E SILVA"},
-    {rota:"4", codigo:"L2375", nome:"DSP ESTRADA DO ARRAIAL"},
-    {rota:"4", codigo:"VD695", nome:"DSP TORRE"},
-    {rota:"4", codigo:"L2383", nome:"DSP MADALENA II"},
-    {rota:"4", codigo:"L2074", nome:"DSP SHOPPING RIOMAR"},
-    {rota:"4", codigo:"VD690", nome:"DSP BOA VIAGEM IV"},
-    {rota:"4", codigo:"L2508", nome:"DSP SHOPPING RECIFE"},
-    {rota:"5", codigo:"L2428", nome:"DSP PETROLINA"},
-    {rota:"5", codigo:"L2429", nome:"DSP PETROLINA CENTRO"},
-    {rota:"5", codigo:"L2496", nome:"DSP PETROLINA II"},
-    {rota:"5", codigo:"L2582", nome:"DSP SHOPPING RIVER"},
-  ];
+    <!-- Modal de Edição Rápida da Placa -->
+    <div id="modalEdicaoPlaca" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50 overflow-y-auto">
+        <div class="relative top-20 mx-auto p-5 border w-11/12 md:max-w-xl shadow-lg rounded-md bg-white">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold">Editar Texto da Placa</h2>
+                <span class="close-button-edicao cursor-pointer text-3xl">&times;</span>
+            </div>
+            <form id="formEdicaoPlaca" class="flex flex-col gap-4">
+                <input type="hidden" id="formEdicaoIndex">
+                <div>
+                    <label for="formEdicaoRota" class="block text-sm font-medium text-gray-700">Texto da Rota:</label>
+                    <input type="text" id="formEdicaoRota" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label for="formEdicaoLoja" class="block text-sm font-medium text-gray-700">Texto da Loja:</label>
+                    <input type="text" id="formEdicaoLoja" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label for="formEdicaoObservacao" class="block text-sm font-medium text-gray-700">Texto da Observação:</label>
+                    <input type="text" id="formEdicaoObservacao" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                </div>
+                <div class="flex items-center mt-2">
+                    <input id="aplicarEmTodosCheckbox" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                    <label for="aplicarEmTodosCheckbox" id="aplicarEmTodosLabel" class="ml-2 block text-sm text-gray-900">Aplicar a todas as placas visíveis</label>
+                </div>
+                <div class="flex justify-end mt-4">
+                    <button type="submit" id="btnSalvarEdicaoPlaca" class="bg-indigo-600 text-white px-5 py-2 rounded-md hover:bg-indigo-700 transition font-semibold">Salvar Alterações</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-  // DOM elements
-  const selectRota = document.getElementById("filtroRota");
-  const selectLoja = document.getElementById("filtroLoja");
-  const placasDiv = document.getElementById("placas");
-  const btnLimpar = document.getElementById("btnLimpar");
-  const btnExportar = document.getElementById("btnExportar");
+    <!-- Modal para mensagens e confirmações -->
+    <div id="messageBox" class="fixed inset-0 bg-gray-800 bg-opacity-60 hidden z-[100] flex items-center justify-center">
+        <div class="relative mx-auto p-6 border w-full max-w-sm shadow-lg rounded-xl bg-white text-center">
+            <h3 class="text-lg font-bold text-slate-800" id="messageTitle"></h3>
+            <div class="py-4">
+                <p class="text-sm text-slate-600" id="messageContent"></p>
+                <!-- Spinner de Carregamento -->
+                <div id="loadingSpinner" class="hidden spinner mx-auto my-4"></div>
+                <p id="loadingJoke" class="hidden text-xs text-slate-500 italic mt-2"></p>
+            </div>
+            <!-- Botões de Ação -->
+            <div id="alertActions" class="mt-2">
+                <button id="messageOkBtn" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg w-full">OK</button>
+            </div>
+            <div id="confirmActions" class="mt-2 flex gap-3 hidden">
+                <button id="messageCancelBtn" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-2 px-4 rounded-lg w-full">Cancelar</button>
+                <button id="messageConfirmBtn" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg w-full">Confirmar</button>
+            </div>
+        </div>
+    </div>
 
-  // Initialize Choices.js on loja multi-select
-  const choicesLoja = new Choices(selectLoja, {
-    removeItemButton: true,
-    searchPlaceholderValue: "Digite para buscar lojas...",
-    noResultsText: "Nenhuma loja encontrada",
-    itemSelectText: "Clique para selecionar",
-    placeholder: true,
-    placeholderValue: "Selecione ou digite lojas...",
-    searchResultLimit: 50,
-    shouldSort: true,
-  });
+    <!-- Bibliotecas JS -->
+    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-  // Populate rotas dropdown
-  function popularRotas() {
-    const rotas = [...new Set(placasData.map(p => p.rota))].sort((a,b) => Number(a)-Number(b));
-    rotas.forEach(r => {
-      const option = document.createElement("option");
-      option.value = r;
-      option.textContent = "ROTA " + r;
-      selectRota.appendChild(option);
-    });
-  }
+    <script>
+    (() => {
+        const { jsPDF } = window.jspdf;
 
-  // Populate lojas in Choices.js (unique sorted by nome)
-  function popularLojas() {
-    const lojasUnicas = [...new Map(placasData.map(p => [p.nome, p])).values()];
-    // Ordenar por nome da loja
-    lojasUnicas.sort((a,b) => a.nome.localeCompare(b.nome));
-    // Adicionar opções ao select
-    lojasUnicas.forEach(loja => {
-      choicesLoja.setChoices(
-        [{value: loja.nome, label: `${loja.codigo} – ${loja.nome}`, selected: false}], 
-        'value', 'label', false
-      );
-    });
-  }
+        // Dados iniciais (serão sobrescritos pelos dados do localStorage se existirem)
+        let placasData = [
+            { rota: "6", codigo: "VD825", nome: "DSP JEQUIE", observacao: "" },
+            { rota: "6", codigo: "VD992", nome: "DSP VITORIA DA CONQUISTA", observacao: "AOS CUIDADOS DE JOÃO" },
+            { rota: "6", codigo: "L2437", nome: "DSP VITORIA DA CONQUISTA II", observacao: "" },
+            { rota: "6", codigo: "L2527", nome: "DSP VITORIA DA CONQUISTA JURACY", observacao: "" },
+            { rota: "6", codigo: "VD863", nome: "DSP BARREIRAS", observacao: "USO E CONSUMO" },
+            { rota: "6", codigo: "VD862", nome: "DSP LUIS EDUARDO MAGALHAES", observacao: "" },
+            { rota: "6", codigo: "L2554", nome: "DSP ITABUNA III", observacao: "" },
+            { rota: "6", codigo: "L2290", nome: "DSP LUIS EDUARDO MAGALHAES II", observacao: "" },
+            { rota: "6", codigo: "L2291", nome: "DSP SANTO ANTONIO DE JESUS", observacao: "" },
+            { rota: "6", codigo: "L2412", nome: "DSP ILHEUS", observacao: "" },
+            { rota: "7", codigo: "L2662", nome: "DSP SHOPPING BOULEVARD", observacao: "" },
+            { rota: "7", codigo: "L2127", nome: "DSP FEIRA DE SANTANA IV", observacao: "" },
+            { rota: "7", codigo: "VD390", nome: "DSP FEira DE SANTANA", observacao: "" },
+            { rota: "7", codigo: "L2116", nome: "DSP FEIRA DE SANTANA III", observacao: "" },
+            { rota: "7", codigo: "VD630", nome: "DSP DIAS DAVILA", observacao: "" },
+            { rota: "7", codigo: "VD552", nome: "DSP CAMACARI", observacao: "" },
+            { rota: "7", codigo: "L2531", nome: "DSP GUARAJUBA", observacao: "" },
+            { rota: "8", codigo: "L2204", nome: "DSP SHOPPING CENTER LAPA", observacao: "" },
+            { rota: "8", codigo: "L2538", nome: "DSP SALVADOR 1", observacao: "" },
+            { rota: "8", codigo: "L2052", nome: "DSP METRO SALVADOR", observacao: "" },
+            { rota: "8", codigo: "L2283", nome: "DSP SHOPPING VITORIA BOULEVARD", observacao: "" },
+            { rota: "8", codigo: "L2161", nome: "DSP CANELA II", observacao: "" },
+            { rota: "8", codigo: "VD395", nome: "DSP CANELA", observacao: "" },
+            { rota: "8", codigo: "L2064", nome: "DSP SALVADOR CHAME CHAME", observacao: "" },
+            { rota: "9", codigo: "L2173", nome: "DSP PARQUE SHOPPING BAHIA", observacao: "" },
+            { rota: "9", codigo: "L2119", nome: "DSP ESTRADA DO COCO", observacao: "" },
+            { rota: "9", codigo: "L2363", nome: "DSP VILAS DO ATLANTICO I", observacao: "" },
+            { rota: "9", codigo: "L2668", nome: "DSP ALPHAVILLE LITORAL NORTE", observacao: "" },
+            { rota: "9", codigo: "VD547", nome: "DSP ITAPUA", observacao: "" },
+            { rota: "9", codigo: "VD458", nome: "DSP ITAPUA II", observacao: "" },
+            { rota: "9", codigo: "VD744", nome: "DSP PIATA", observacao: "" },
+            { rota: "9", codigo: "VD737", nome: "DSP PATAMARES", observacao: "" },
+            { rota: "9", codigo: "VD546", nome: "DSP JORGE AMADO", observacao: "" },
+            { rota: "10", codigo: "L2003", nome: "DSP TROBOGY", observacao: "" },
+            { rota: "10", codigo: "VD834", nome: "DSP SAO RAFAEL", observacao: "" },
+            { rota: "10", codigo: "L2174", nome: "DSP SHOPPING PARALELA", observacao: "" },
+            { rota: "10", codigo: "VD845", nome: "DSP CAJAZEIRAS", observacao: "" },
+            { rota: "10", codigo: "L2221", nome: "DSP PERIPERI", observacao: "" },
+            { rota: "10", codigo: "VD643", nome: "DSP SIMOES FILHO", observacao: "" },
+            { rota: "10", codigo: "VD620", nome: "DSP CANDEIAS", observacao: "" },
+            { rota: "11", codigo: "L2077", nome: "DSP SHOPPING BELLA VISTA", observacao: "" },
+            { rota: "11", codigo: "L2211", nome: "DSP PERNAMBUES", observacao: "" },
+            { rota: "11", codigo: "VD544", nome: "DSP MATATU", observacao: "" },
+            { rota: "11", codigo: "VD929", nome: "DSP ACUPE DE BROTAS", observacao: "" },
+            { rota: "11", codigo: "L2631", nome: "DSP BROTAS III", observacao: "" },
+            { rota: "11", codigo: "VD399", nome: "DSP NOVA BROTAS", observacao: "" },
+            { rota: "11", codigo: "VD981", nome: "DSP VASCO DA GAMA", observacao: "" },
+            { rota: "11", codigo: "L2277", nome: "DSP FEDERACAO SALVADOR", observacao: "" },
+            { rota: "11", codigo: "VD397", nome: "DSP ONDINA", observacao: "" },
+            { rota: "12", codigo: "L2243", nome: "DSP SHOPPING BARRA SALVADOR", observacao: "" },
+            { rota: "12", codigo: "L2088", nome: "DSP RIO VERMELHO II", observacao: "" },
+            { rota: "12", codigo: "VD432", nome: "DSP PITUBA III", observacao: "" },
+            { rota: "12", codigo: "L2056", nome: "DSP PITUBA IV", observacao: "" },
+            { rota: "12", codigo: "VD890", nome: "DSP CAMINHO DAS ARVORES II", observacao: "" },
+            { rota: "12", codigo: "VD712", nome: "DSP ANITA GARIBALDI", observacao: "" },
+            { rota: "12", codigo: "VD398", nome: "DSP MIGUEL CALMON", observacao: "" },
+            { rota: "12", codigo: "L2191", nome: "DSP MARES", observacao: "" },
+            { rota: "13", codigo: "VD697", nome: "DSP IMBUI", observacao: "" },
+            { rota: "13", codigo: "VD550", nome: "DSP COSTA AZUL", observacao: "" },
+            { rota: "13", codigo: "L2123", nome: "DSP COSTA AZUL II", observacao: "" },
+            { rota: "13", codigo: "VD936", nome: "DSP STIEP", observacao: "" },
+            { rota: "13", codigo: "VD393", nome: "DSP CABULA", observacao: "" },
+            { rota: "13", codigo: "VD821", nome: "DSP SALVADOR III", observacao: "" },
+            { rota: "14", codigo: "VD530", nome: "DSP LAURO DE FREITAS", observacao: "" },
+            { rota: "14", codigo: "VD558", nome: "DSP STELLA MARIS", observacao: "" },
+            { rota: "15", codigo: "VD926", nome: "DSP CABULA II", observacao: "" },
+            { rota: "15", codigo: "L2169", nome: "DSP CANDEAL", observacao: "" },
+            { rota: "15", codigo: "L2093", nome: "DSP SHOPPING DA BAHIA 3 PISO", observacao: "" },
+            { rota: "15", codigo: "L2092", nome: "DSP SHOPPING DA BAHIA 2 PISO", observacao: "" },
+            { rota: "15", codigo: "L2091", nome: "DSP SHOPPING DA BAHIA 1 PISO", observacao: "" },
+            { rota: "16", codigo: "VD713", nome: "DSP LARGO DO TAMARINEIRO", observacao: "" },
+            { rota: "16", codigo: "VD970", nome: "DSP CAMINHO DE AREIA", observacao: "" },
+            { rota: "16", codigo: "VD604", nome: "DSP GRACA", observacao: "" },
+            { rota: "16", codigo: "VD220", nome: "DSP PITUBA", observacao: "" },
+            { rota: "16", codigo: "VD434", nome: "DSP ALTO DO ITAIGARA", observacao: "" },
+            { rota: "16", codigo: "VD568", nome: "DSP CAMINHO DAS ARVORES", observacao: "" },
+            { rota: "20", codigo: "VD913", nome: "DSP CAMINHO DAS ARVORES III", observacao: "" },
+            { rota: "20", codigo: "VD435", nome: "DSP SHOPPING SALVADOR", observacao: "" },
+            { rota: "20", codigo: "L2280", nome: "DSP ALPHAVILLE SALVADOR 1", observacao: "" },
+            { rota: "1", codigo: "L2507", nome: "DSP SHOPPING PATTEO OLINDA", observacao: "" },
+            { rota: "1", codigo: "L2526", nome: "DSP SHOPPING CARUARU", observacao: "" },
+            { rota: "1", codigo: "L2438", nome: "DSP CARUARU II", observacao: "" },
+            { rota: "1", codigo: "L2384", nome: "DSP VITORIA DE SANTO ANTAO", observacao: "" },
+            { rota: "1", codigo: "VD794", nome: "DSP JANGA", observacao: "" },
+            { rota: "1", codigo: "VD871", nome: "DSP OLINDA II", observacao: "" },
+            { rota: "2", codigo: "VD698", nome: "DSP OLINDA", observacao: "" },
+            { rota: "2", codigo: "L2493", nome: "DSP ESPINHEIRO", observacao: "" },
+            { rota: "2", codigo: "VD288", nome: "DSP RECIFE CENTRO II", observacao: "" },
+            { rota: "2", codigo: "L2589", nome: "DSP IPUTINGA", observacao: "" },
+            { rota: "2", codigo: "L2368", nome: "DSP CAXANGA", observacao: "" },
+            { rota: "2", codigo: "L2386", nome: "DSP IMBIRIBEIRA", observacao: "" },
+            { rota: "2", codigo: "L2421", nome: "DSP IPSEP", observacao: "" },
+            { rota: "3", codigo: "VD772", nome: "DSP BOA VIAGEM", observacao: "" },
+            { rota: "3", codigo: "L2617", nome: "DPSP CONSELHEIRO AGUIAR III", observacao: "" },
+            { rota: "3", codigo: "VD755", nome: "DSP BOA VIAGEM II", observacao: "" },
+            { rota: "3", codigo: "L2534", nome: "DSP DOMINGOS FERREIRA", observacao: "" },
+            { rota: "3", codigo: "L2453", nome: "DSP RIBEIRO DE BRITO", observacao: "" },
+            { rota: "3", codigo: "VD770", nome: "DSP BOA VIAGEM V", observacao: "" },
+            { rota: "3", codigo: "L2597", nome: "DSP SETUBAL", observacao: "" },
+            { rota: "3", codigo: "VD767", nome: "DSP GUARARAPES III", observacao: "" },
+            { rota: "4", codigo: "L2371", nome: "DSP ROSA E SILVA", observacao: "" },
+            { rota: "4", codigo: "L2375", nome: "DSP ESTRADA DO ARRAIAL", observacao: "" },
+            { rota: "4", codigo: "VD695", nome: "DSP TORRE", observacao: "" },
+            { rota: "4", codigo: "L2383", nome: "DSP MADALENA II", observacao: "" },
+            { rota: "4", codigo: "L2074", nome: "DSP SHOPPING RIOMAR", observacao: "" },
+            { rota: "4", codigo: "VD690", nome: "DSP BOA VIAGEM IV", observacao: "" },
+            { rota: "4", codigo: "L2508", nome: "DSP SHOPPING RECIFE", observacao: "" },
+            { rota: "5", codigo: "L2428", nome: "DSP PETROLINA", observacao: "" },
+            { rota: "5", codigo: "L2429", nome: "DSP PETROLINA CENTRO", observacao: "" },
+            { rota: "5", codigo: "L2496", nome: "DSP PETROLINA II", observacao: "" },
+            { rota: "5", codigo: "L2582", nome: "DSP SHOPPING RIVER", observacao: "" },
+        ];
 
-  // Criar placa HTML
-  function criarPlaca(p) {
-    const div = document.createElement("div");
-    div.className = "page";
-    div.innerHTML = `<div class="rota">ROTA ${p.rota}</div><div class="loja">${p.codigo} - ${p.nome}</div>`;
-    return div;
-  }
+        let graficoRotas;
+        let isGraphVisible = false;
 
-  // Renderizar placas filtradas
-  function renderizarPlacas() {
-    placasDiv.innerHTML = "";
+        // Mapeamento de elementos do DOM
+        const dom = {
+            placasDiv: document.getElementById("placas"),
+            selectRota: document.getElementById("filtroRota"),
+            selectLoja: document.getElementById("filtroLoja"),
+            btnLimpar: document.getElementById("btnLimpar"),
+            btnExportarPDF: document.getElementById("btnExportarPDF"),
+            btnExportarCSV: document.getElementById("btnExportarCSV"),
+            btnImportarCSV: document.getElementById("btnImportarCSV"),
+            csvFileInput: document.getElementById("csvFileInput"),
+            btnResetarDados: document.getElementById("btnResetarDados"),
+            btnGerenciar: document.getElementById("btnGerenciar"),
+            btnMostrarGrafico: document.getElementById("btnMostrarGrafico"),
+            campoBusca: document.getElementById("campoBusca"),
+            btnBuscar: document.getElementById("btnBuscar"),
+            resultadoBusca: document.getElementById("resultadoBusca"),
+            statTotalLojas: document.getElementById("statTotalLojas"),
+            statTotalRotas: document.getElementById("statTotalRotas"),
+            statRotaMaisLojas: document.getElementById("statRotaMaisLojas"),
+            modalGerenciamento: document.getElementById("modalGerenciamento"),
+            closeModalBtn: document.querySelector("#modalGerenciamento .close-button"),
+            formLoja: document.getElementById("formLoja"),
+            formIndex: document.getElementById("formIndex"),
+            formRota: document.getElementById("formRota"),
+            formCodigo: document.getElementById("formCodigo"),
+            formNome: document.getElementById("formNome"),
+            formObservacao: document.getElementById("formObservacao"),
+            btnSalvarLoja: document.getElementById("btnSalvarLoja"),
+            listaLojasGerenciar: document.getElementById("listaLojasGerenciar"),
+            modalEdicaoPlaca: document.getElementById("modalEdicaoPlaca"),
+            closeModalEdicaoBtn: document.querySelector("#modalEdicaoPlaca .close-button-edicao"),
+            formEdicaoPlaca: document.getElementById("formEdicaoPlaca"),
+            formEdicaoIndex: document.getElementById("formEdicaoIndex"),
+            formEdicaoRota: document.getElementById("formEdicaoRota"),
+            formEdicaoLoja: document.getElementById("formEdicaoLoja"),
+            formEdicaoObservacao: document.getElementById("formEdicaoObservacao"),
+            aplicarEmTodosCheckbox: document.getElementById('aplicarEmTodosCheckbox'),
+            aplicarEmTodosLabel: document.getElementById('aplicarEmTodosLabel'),
+            graficoContainer: document.getElementById("graficoContainer"),
+            graficoRotasCanvas: document.getElementById("graficoRotas"),
+            messageBox: document.getElementById('messageBox'),
+            messageTitle: document.getElementById('messageTitle'),
+            messageContent: document.getElementById('messageContent'),
+            loadingSpinner: document.getElementById('loadingSpinner'),
+            loadingJoke: document.getElementById('loadingJoke'),
+            alertActions: document.getElementById('alertActions'),
+            confirmActions: document.getElementById('confirmActions'),
+            messageOkBtn: document.getElementById('messageOkBtn'),
+            messageConfirmBtn: document.getElementById('messageConfirmBtn'),
+            messageCancelBtn: document.getElementById('messageCancelBtn'),
+        };
 
-    const rotaSelecionada = selectRota.value;
-    const lojasSelecionadas = choicesLoja.getValue(true); // array de nomes selecionados
+        const choicesLoja = new Choices(dom.selectLoja, {
+            removeItemButton: true,
+            searchPlaceholderValue: "Digite para buscar...",
+            noResultsText: "Nenhum resultado",
+            itemSelectText: "Pressione para selecionar",
+            placeholder: true,
+            placeholderValue: "Selecione uma ou mais lojas...",
+        });
+        
+        const jokes = [
+            "Porque é que o programador terminou o namoro? Porque não havia mais commits.",
+            "Qual é o animal de estimação preferido de um programador? Um mouse.",
+            "O que um ficheiro HTML disse a um ficheiro CSS? 'Deixa-me em paz, eu cuido do conteúdo, tu cuidas da aparência!'",
+            "Hardware: a parte de um computador que se pode chutar.",
+            "Um programador entra num bar e pede uma bebida. Depois pede mais 1.0000000000000001 bebidas.",
+            "Existem 10 tipos de pessoas no mundo: as que entendem binário e as que não."
+        ];
 
-    const placasFiltradas = placasData.filter(p => {
-      const rotaOK = !rotaSelecionada || p.rota === rotaSelecionada;
-      const lojaOK = lojasSelecionadas.length === 0 || lojasSelecionadas.includes(p.nome);
-      return rotaOK && lojaOK;
-    });
+        // --- Funções de Mensagens e Notificações ---
+        let confirmCallback = null;
 
-    if(placasFiltradas.length === 0) {
-      placasDiv.innerHTML = `<p style="text-align:center; font-weight:600; color:#777;">Nenhuma placa encontrada para os filtros selecionados.</p>`;
-      return;
-    }
+        function showMessage(title, content, type = 'alert', callback = null) {
+            dom.messageTitle.textContent = title;
+            dom.messageContent.textContent = content;
+            dom.loadingSpinner.classList.add('hidden');
+            dom.loadingJoke.classList.add('hidden');
 
-    placasFiltradas.forEach(p => {
-      placasDiv.appendChild(criarPlaca(p));
-    });
-  }
+            if (type === 'alert') {
+                dom.alertActions.classList.remove('hidden');
+                dom.confirmActions.classList.add('hidden');
+            } else if (type === 'confirm') {
+                dom.alertActions.classList.add('hidden');
+                dom.confirmActions.classList.remove('hidden');
+                confirmCallback = callback;
+            } else if (type === 'loading') {
+                dom.alertActions.classList.add('hidden');
+                dom.confirmActions.classList.add('hidden');
+                dom.loadingSpinner.classList.remove('hidden');
+                dom.loadingJoke.classList.remove('hidden');
+                dom.loadingJoke.textContent = jokes[Math.floor(Math.random() * jokes.length)];
+            }
 
-  // Limpar filtros
-  btnLimpar.addEventListener("click", () => {
-    selectRota.value = "";
-    choicesLoja.clearStore();
-    renderizarPlacas();
-  });
+            dom.messageBox.classList.remove('hidden');
+        }
 
-  // Exportar para PDF
-  btnExportar.addEventListener("click", async () => {
-    const placasFiltradas = placasDiv.querySelectorAll(".page");
-    if(placasFiltradas.length === 0) {
-      alert("Nenhuma placa para exportar!");
-      return;
-    }
-    
-    const pdf = new jsPDF({
-      orientation: "landscape",
-      unit: "mm",
-      format: "a4",
-    });
+        function hideMessage() {
+            dom.messageBox.classList.add('hidden');
+            confirmCallback = null;
+        }
 
-    for(let i = 0; i < placasFiltradas.length; i++) {
-      const placa = placasFiltradas[i];
-      // Usar html2canvas para capturar a placa como imagem
-      const canvas = await html2canvas(placa, {scale: 2});
-      const imgData = canvas.toDataURL("image/png");
+        // --- Funções de Persistência (localStorage) ---
+        function salvarDados() {
+            localStorage.setItem('placasData', JSON.stringify(placasData));
+        }
 
-      const imgProps = pdf.getImageProperties(imgData);
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = pdf.internal.pageSize.getHeight();
+        function carregarDados() {
+            try {
+                const dadosSalvos = localStorage.getItem('placasData');
+                if (dadosSalvos) {
+                    placasData = JSON.parse(dadosSalvos);
+                }
+            } catch (e) {
+                console.error("Erro ao carregar dados do localStorage:", e);
+                showMessage("Erro", "Não foi possível carregar os dados salvos.");
+            }
+        }
 
-      // Ajustar imagem para preencher a página mantendo proporção
-      let width, height;
-      if(imgProps.width > imgProps.height) {
-        width = pdfWidth;
-        height = (imgProps.height * pdfWidth) / imgProps.width;
-      } else {
-        height = pdfHeight;
-        width = (imgProps.width * pdfHeight) / imgProps.height;
-      }
+        // --- Funções de UI e Renderização ---
+        function popularFiltros() {
+            const rotas = [...new Set(placasData.map(p => p.rota))].sort((a, b) => Number(a) - Number(b));
+            const rotaAtual = dom.selectRota.value;
+            dom.selectRota.innerHTML = '<option value="">Todas as Rotas</option>';
+            rotas.forEach(r => {
+                dom.selectRota.innerHTML += `<option value="${r}">ROTA ${r}</option>`;
+            });
+            dom.selectRota.value = rotaAtual;
 
-      if(i > 0) pdf.addPage();
-      pdf.addImage(imgData, 'PNG', (pdfWidth - width) / 2, (pdfHeight - height) / 2, width, height);
-    }
+            const lojasSelecionadas = choicesLoja.getValue(true);
+            const lojasUnicas = [...new Map(placasData.map(p => [p.nome, p])).values()];
+            lojasUnicas.sort((a, b) => a.nome.localeCompare(b.nome));
+            const opcoes = lojasUnicas.map(loja => ({
+                value: loja.nome,
+                label: `${loja.codigo} – ${loja.nome}`,
+                selected: lojasSelecionadas.includes(loja.nome)
+            }));
+            choicesLoja.setChoices(opcoes, 'value', 'label', true);
+        }
+        
+        function criarPlaca(p, index) {
+            const div = document.createElement("div");
+            div.className = "page placa-preview";
+            let observacaoHTML = '';
+            if (p.observacao && p.observacao.trim() !== '') {
+                observacaoHTML = `<div class="observacao">${p.observacao}</div>`;
+            }
+            div.innerHTML = `
+                <button class="btn-editar-placa" data-index="${index}" title="Editar Placa">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                </button>
+                <div class="rota">ROTA ${p.rota}</div>
+                <div class="loja">${p.codigo} - ${p.nome}</div>
+                ${observacaoHTML}`;
+            return div;
+        }
 
-    pdf.save("placas_filtradas.pdf");
-  });
+        function renderizarPlacas() {
+            const rotaSelecionada = dom.selectRota.value;
+            const lojasSelecionadas = choicesLoja.getValue(true);
 
-  // Eventos filtros
-  selectRota.addEventListener("change", renderizarPlacas);
-  selectLoja.addEventListener("change", renderizarPlacas);
+            const placasFiltradas = placasData.map((p, index) => ({...p, originalIndex: index})) // Manter o índice original
+                .filter(p => {
+                    const rotaOK = !rotaSelecionada || p.rota === rotaSelecionada;
+                    const lojaOK = lojasSelecionadas.length === 0 || lojasSelecionadas.includes(p.nome);
+                    return rotaOK && lojaOK;
+                });
 
-  // Inicialização
-  popularRotas();
-  popularLojas();
-  renderizarPlacas();
+            dom.placasDiv.innerHTML = "";
+            if (placasFiltradas.length === 0) {
+                dom.placasDiv.innerHTML = `<p class="col-span-full text-center text-slate-500 py-8">Nenhuma placa encontrada para os filtros selecionados.</p>`;
+                return;
+            }
+            placasFiltradas.forEach(p => dom.placasDiv.appendChild(criarPlaca(p, p.originalIndex)));
+        }
+        
+        function atualizarEstatisticas() {
+            const totalLojas = placasData.length;
+            const rotasUnicas = new Set(placasData.map(p => p.rota));
+            const totalRotas = rotasUnicas.size;
+            
+            let rotaMaisLojas = '-';
+            if (totalLojas > 0) {
+                const contagemRotas = placasData.reduce((acc, p) => {
+                    acc[p.rota] = (acc[p.rota] || 0) + 1;
+                    return acc;
+                }, {});
+                rotaMaisLojas = Object.keys(contagemRotas).reduce((a, b) => contagemRotas[a] > contagemRotas[b] ? a : b);
+                rotaMaisLojas = `Rota ${rotaMaisLojas}`;
+            }
 
-})();
-</script>
+            dom.statTotalLojas.textContent = totalLojas;
+            dom.statTotalRotas.textContent = totalRotas;
+            dom.statRotaMaisLojas.textContent = rotaMaisLojas;
+        }
 
+        // --- Funções do CRUD (Gerenciamento) ---
+        function abrirModalGerenciamento() {
+            dom.modalGerenciamento.style.display = "block";
+            renderizarListaGerenciamento();
+        }
+
+        function fecharModalGerenciamento() {
+            dom.modalGerenciamento.style.display = "none";
+            dom.formLoja.reset();
+            dom.formIndex.value = "";
+            dom.btnSalvarLoja.textContent = "Adicionar Loja";
+        }
+
+        function renderizarListaGerenciamento() {
+            dom.listaLojasGerenciar.innerHTML = "";
+            const dadosOrdenados = [...placasData].sort((a,b) => a.nome.localeCompare(b.nome));
+            dadosOrdenados.forEach((loja) => {
+                const index = placasData.findIndex(p => p.codigo === loja.codigo && p.nome === loja.nome);
+                const div = document.createElement("div");
+                div.innerHTML = `
+                    <span class="truncate pr-4">Rota ${loja.rota} - ${loja.codigo} - ${loja.nome}</span>
+                    <div class="flex-shrink-0 flex gap-2">
+                        <button class="btn-editar" data-index="${index}">Editar</button>
+                        <button class="btn-deletar" data-index="${index}">Deletar</button>
+                    </div>`;
+                dom.listaLojasGerenciar.appendChild(div);
+            });
+        }
+
+        function gerenciarSubmit(event) {
+            event.preventDefault();
+            const rota = dom.formRota.value.trim();
+            const codigo = dom.formCodigo.value.trim().toUpperCase();
+            const nome = dom.formNome.value.trim().toUpperCase();
+            const observacao = dom.formObservacao.value.trim().toUpperCase();
+            const index = dom.formIndex.value;
+
+            if (!rota || !codigo || !nome) {
+                showMessage("Erro", "Os campos Rota, Código e Nome são obrigatórios.");
+                return;
+            }
+
+            if (index !== "") {
+                placasData[index] = { rota, codigo, nome, observacao };
+            } else {
+                placasData.push({ rota, codigo, nome, observacao });
+            }
+
+            salvarDados();
+            fecharModalGerenciamento();
+            atualizarTudo();
+            showMessage("Sucesso!", "Loja salva com sucesso.");
+        }
+
+        function editarItem(index) {
+            const loja = placasData[index];
+            dom.formRota.value = loja.rota;
+            dom.formCodigo.value = loja.codigo;
+            dom.formNome.value = loja.nome;
+            dom.formObservacao.value = loja.observacao || '';
+            dom.formIndex.value = index;
+            dom.btnSalvarLoja.textContent = "Salvar Alterações";
+            dom.formRota.focus();
+        }
+
+        function deletarItem(index) {
+            const loja = placasData[index];
+            showMessage(
+                "Confirmar Exclusão",
+                `Tem certeza que deseja deletar a loja "${loja.nome}"?`,
+                'confirm',
+                (confirmed) => {
+                    if (confirmed) {
+                        placasData.splice(index, 1);
+                        salvarDados();
+                        atualizarTudo();
+                        renderizarListaGerenciamento();
+                        showMessage("Sucesso", "Loja deletada com sucesso.");
+                    }
+                    hideMessage();
+                }
+            );
+        }
+
+        // --- Funções de Edição Rápida da Placa ---
+        function abrirModalEdicao(index) {
+            const placa = placasData[index];
+            dom.formEdicaoIndex.value = index;
+            dom.formEdicaoRota.value = `ROTA ${placa.rota}`;
+            dom.formEdicaoLoja.value = `${placa.codigo} - ${placa.nome}`;
+            dom.formEdicaoObservacao.value = placa.observacao || '';
+            
+            // Atualiza o texto da checkbox
+            const placasVisiveis = document.querySelectorAll('#placas .page').length;
+            dom.aplicarEmTodosLabel.textContent = `Aplicar a todas as ${placasVisiveis} placas visíveis`;
+            dom.aplicarEmTodosCheckbox.checked = false;
+
+            dom.modalEdicaoPlaca.style.display = "block";
+        }
+
+        function fecharModalEdicao() {
+            dom.modalEdicaoPlaca.style.display = "none";
+        }
+
+        function salvarEdicaoPlaca(event) {
+            event.preventDefault();
+            const index = parseInt(dom.formEdicaoIndex.value, 10);
+            
+            const rotaTexto = dom.formEdicaoRota.value.replace('ROTA ', '').trim();
+            const lojaTextoCompleto = dom.formEdicaoLoja.value.split(' - ');
+            const codigoTexto = lojaTextoCompleto.shift();
+            const nomeTexto = lojaTextoCompleto.join(' - ');
+            const observacaoTexto = dom.formEdicaoObservacao.value.trim().toUpperCase();
+
+            const aplicarParaTodos = dom.aplicarEmTodosCheckbox.checked;
+
+            if (aplicarParaTodos) {
+                const rotaSelecionada = dom.selectRota.value;
+                const lojasSelecionadas = choicesLoja.getValue(true);
+
+                placasData.forEach(placa => {
+                    const rotaOK = !rotaSelecionada || placa.rota === rotaSelecionada;
+                    const lojaOK = lojasSelecionadas.length === 0 || lojasSelecionadas.includes(placa.nome);
+                    if (rotaOK && lojaOK) {
+                        placa.rota = rotaTexto;
+                        placa.codigo = codigoTexto;
+                        placa.nome = nomeTexto;
+                        placa.observacao = observacaoTexto;
+                    }
+                });
+
+            } else {
+                placasData[index].rota = rotaTexto;
+                placasData[index].codigo = codigoTexto;
+                placasData[index].nome = nomeTexto;
+                placasData[index].observacao = observacaoTexto;
+            }
+            
+            salvarDados();
+            fecharModalEdicao();
+            renderizarPlacas();
+            showMessage("Sucesso!", "Placa(s) atualizada(s) com sucesso.");
+        }
+
+
+        // --- Funções do Gráfico ---
+        function gerarGrafico() {
+            if (graficoRotas) graficoRotas.destroy();
+            graficoRotas = new Chart(dom.graficoRotasCanvas, {
+                type: 'bar',
+                data: gerarDadosParaGrafico(),
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { y: { beginAtZero: true, ticks: { precision: 0 } } },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
+        
+        function gerarDadosParaGrafico() {
+            const contagemRotas = placasData.reduce((acc, p) => {
+                acc[p.rota] = (acc[p.rota] || 0) + 1;
+                return acc;
+            }, {});
+            const rotasOrdenadas = Object.keys(contagemRotas).sort((a, b) => Number(a) - Number(b));
+            return {
+                labels: rotasOrdenadas.map(r => `Rota ${r}`),
+                datasets: [{
+                    label: 'Número de Lojas',
+                    data: rotasOrdenadas.map(r => contagemRotas[r]),
+                    backgroundColor: 'rgba(59, 130, 246, 0.5)',
+                    borderColor: 'rgba(59, 130, 246, 1)',
+                    borderWidth: 1,
+                    borderRadius: 4
+                }]
+            };
+        }
+
+        // --- Funções de Importar/Exportar e Busca ---
+        function buscarLoja() {
+            const termo = dom.campoBusca.value.trim().toUpperCase();
+            if (!termo) {
+                dom.resultadoBusca.innerHTML = 'Resultados da busca aparecerão aqui.';
+                return;
+            };
+            const resultado = placasData.find(p => p.nome.toUpperCase().includes(termo) || p.codigo.toUpperCase() === termo);
+            if (resultado) {
+                dom.resultadoBusca.innerHTML = `<strong>Loja Encontrada:</strong> Rota ${resultado.rota} - ${resultado.codigo} - ${resultado.nome}`;
+            } else {
+                dom.resultadoBusca.innerHTML = `<span class="text-red-500">Nenhuma loja encontrada.</span>`;
+            }
+        }
+
+        function exportarCSV() {
+            if (placasData.length === 0) {
+                showMessage("Atenção", "Não há dados para exportar.");
+                return;
+            }
+            const headers = "rota,codigo,nome,observacao";
+            const rows = placasData.map(p => `${p.rota},${p.codigo},"${p.nome.replace(/"/g, '""')}","${(p.observacao || '').replace(/"/g, '""')}"`).join('\n');
+            const csvContent = "data:text/csv;charset=utf-8," + headers + '\n' + rows;
+            const link = document.createElement("a");
+            link.setAttribute("href", encodeURI(csvContent));
+            link.setAttribute("download", "dados_lojas.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function importarCSV(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const text = e.target.result;
+                    const lines = text.split(/\r?\n/).filter(line => line.trim() !== '');
+                    if (lines.length <= 1) throw new Error("Arquivo CSV vazio ou sem dados.");
+                    
+                    const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+                    if (!headers.includes('rota') || !headers.includes('codigo') || !headers.includes('nome')) {
+                        throw new Error("O arquivo CSV deve conter as colunas: rota, codigo, nome. A coluna 'observacao' é opcional.");
+                    }
+
+                    const novosDados = [];
+                    for (let i = 1; i < lines.length; i++) {
+                        const values = lines[i].split(',');
+                        if (values.length >= 3) {
+                            novosDados.push({
+                                rota: values[0].trim(),
+                                codigo: values[1].trim(),
+                                nome: values[2].trim().replace(/"/g, ''),
+                                observacao: (values[3] || '').trim().replace(/"/g, '')
+                            });
+                        }
+                    }
+                    placasData = novosDados;
+                    salvarDados();
+                    atualizarTudo();
+                    showMessage("Sucesso!", `${novosDados.length} lojas foram importadas com sucesso.`);
+                } catch (error) {
+                    showMessage("Erro de Importação", `Ocorreu um erro ao ler o arquivo: ${error.message}`);
+                } finally {
+                    dom.csvFileInput.value = '';
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        async function exportarPDF() {
+            const placasParaExportar = dom.placasDiv.querySelectorAll(".page");
+            if (placasParaExportar.length === 0) {
+                showMessage("Atenção", "Nenhuma placa para exportar com os filtros atuais.");
+                return;
+            }
+            
+            showMessage("A exportar o PDF...", "Por favor, aguarde...", 'loading');
+
+            const pdf = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = pdf.internal.pageSize.getHeight();
+
+            for (let i = 0; i < placasParaExportar.length; i++) {
+                const placaElement = placasParaExportar[i];
+                
+                const rotaElement = placaElement.querySelector('.rota');
+                const lojaElement = placaElement.querySelector('.loja');
+                const obsElement = placaElement.querySelector('.observacao');
+                
+                const originalRotaColor = rotaElement.style.color;
+                const originalLojaColor = lojaElement.style.color;
+                const originalObsColor = obsElement ? obsElement.style.color : '';
+
+                rotaElement.style.color = 'black';
+                lojaElement.style.color = 'black';
+                if (obsElement) obsElement.style.color = 'black';
+                
+                placaElement.classList.remove('placa-preview');
+
+                const canvas = await html2canvas(placaElement, {
+                    scale: 1, 
+                    width: placaElement.scrollWidth,
+                    height: placaElement.scrollHeight,
+                    useCORS: true
+                });
+                
+                placaElement.classList.add('placa-preview');
+
+                rotaElement.style.color = originalRotaColor;
+                lojaElement.style.color = originalLojaColor;
+                if (obsElement) obsElement.style.color = originalObsColor;
+
+                const imgData = canvas.toDataURL('image/png');
+
+                if (i > 0) pdf.addPage();
+                
+                pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+            }
+
+            pdf.save("placas_filtradas.pdf");
+            hideMessage();
+        }
+        
+        // --- Lógica de Inicialização e Atualização Geral ---
+        function atualizarTudo() {
+            popularFiltros();
+            renderizarPlacas();
+            atualizarEstatisticas();
+            gerarGrafico();
+        }
+
+        function init() {
+            carregarDados();
+            atualizarTudo();
+            
+            // Adiciona event listeners
+            dom.selectRota.addEventListener("change", renderizarPlacas);
+            dom.selectLoja.addEventListener("change", renderizarPlacas);
+            dom.btnLimpar.addEventListener("click", () => {
+                dom.selectRota.value = "";
+                choicesLoja.clearStore();
+                choicesLoja.clearInput();
+                renderizarPlacas();
+            });
+            dom.btnExportarPDF.addEventListener("click", exportarPDF);
+            dom.btnExportarCSV.addEventListener("click", exportarCSV);
+            dom.btnImportarCSV.addEventListener("click", () => dom.csvFileInput.click());
+            dom.csvFileInput.addEventListener("change", importarCSV);
+            dom.btnResetarDados.addEventListener("click", () => {
+                showMessage(
+                    "Resetar Dados",
+                    "Isso removerá TODOS os dados salvos e restaurará a lista padrão. Deseja continuar?",
+                    'confirm',
+                    (confirmed) => {
+                        if (confirmed) {
+                            localStorage.removeItem('placasData');
+                            // Recarrega a página para usar os dados padrão do script
+                            window.location.reload();
+                        } else {
+                            hideMessage();
+                        }
+                    }
+                );
+            });
+            dom.btnBuscar.addEventListener("click", buscarLoja);
+            dom.campoBusca.addEventListener("keypress", (e) => { if (e.key === 'Enter') buscarLoja(); });
+            dom.btnGerenciar.addEventListener("click", abrirModalGerenciamento);
+            dom.closeModalBtn.addEventListener("click", fecharModalGerenciamento);
+            dom.formLoja.addEventListener("submit", gerenciarSubmit);
+            dom.listaLojasGerenciar.addEventListener("click", (e) => {
+                const target = e.target.closest("button");
+                if (!target) return;
+                const index = target.dataset.index;
+                if (target.classList.contains("btn-editar")) editarItem(index);
+                else if (target.classList.contains("btn-deletar")) deletarItem(index);
+            });
+            
+            // Eventos da Edição Rápida de Placa
+            dom.placasDiv.addEventListener('click', (e) => {
+                const target = e.target.closest('.btn-editar-placa');
+                if (target) {
+                    const index = target.dataset.index;
+                    abrirModalEdicao(index);
+                }
+            });
+            dom.closeModalEdicaoBtn.addEventListener("click", fecharModalEdicao);
+            dom.formEdicaoPlaca.addEventListener("submit", salvarEdicaoPlaca);
+
+            dom.btnMostrarGrafico.addEventListener("click", () => {
+                isGraphVisible = !isGraphVisible;
+                dom.graficoContainer.style.display = isGraphVisible ? 'block' : 'none';
+                dom.btnMostrarGrafico.innerHTML = isGraphVisible 
+                    ? dom.btnMostrarGrafico.innerHTML.replace('Mostrar', 'Ocultar')
+                    : dom.btnMostrarGrafico.innerHTML.replace('Ocultar', 'Mostrar');
+            });
+            dom.messageOkBtn.addEventListener('click', hideMessage);
+            dom.messageCancelBtn.addEventListener('click', () => {
+                if (confirmCallback) confirmCallback(false);
+                hideMessage();
+            });
+            dom.messageConfirmBtn.addEventListener('click', () => {
+                if (confirmCallback) confirmCallback(true);
+            });
+        }
+
+        init();
+    })();
+    </script>
 </body>
 </html>
