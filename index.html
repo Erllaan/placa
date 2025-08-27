@@ -5,8 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Gerenciador de Placas com Análise</title>
 
+    <!-- Choices.js CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
@@ -152,6 +155,23 @@
         }
         .lista-lojas-gerenciar .btn-editar { background-color: #f59e0b; } /* amber-500 */
         .lista-lojas-gerenciar .btn-deletar { background-color: #ef4444; } /* red-500 */
+
+        /* --- NOVOS ESTILOS PARA A BARRA DE PROGRESSO --- */
+        .progress-bar-container {
+            width: 100%;
+            background-color: #e5e7eb; /* gray-200 */
+            border-radius: 9999px;
+            overflow: hidden;
+            margin-top: 1rem;
+            height: 1rem;
+        }
+        .progress-bar {
+            height: 100%;
+            background-color: #4f46e5; /* indigo-600 */
+            width: 0%;
+            transition: width 0.3s ease-in-out;
+            border-radius: 9999px;
+        }
     </style>
 </head>
 <body class="p-4 md:p-8">
@@ -162,6 +182,7 @@
             <p class="text-slate-500 mt-2">Filtre, gerencie e exporte as placas das lojas com facilidade.</p>
         </header>
 
+        <!-- Painel de Estatísticas -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex items-center gap-4">
                 <div class="bg-blue-100 p-3 rounded-full"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-500"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
@@ -186,7 +207,9 @@
             </div>
         </div>
 
+        <!-- Cards de Controle -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            <!-- Card de Filtros e Busca -->
             <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-slate-200">
                 <h2 class="text-xl font-bold mb-4">Filtros e Busca</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -211,6 +234,7 @@
                 </div>
             </div>
             
+            <!-- Card de Ações -->
             <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col justify-between">
                 <div>
                     <h2 class="text-xl font-bold mb-4">Ações</h2>
@@ -225,6 +249,7 @@
             </div>
         </div>
 
+        <!-- Card do Gráfico (oculto por padrão) -->
         <div id="graficoContainer" class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 mb-8" style="display: none; animation: fadeIn 0.5s;">
             <h2 class="text-xl font-bold mb-4">Análise Gráfica: Lojas por Rota</h2>
             <div class="h-96">
@@ -232,6 +257,7 @@
             </div>
         </div>
 
+        <!-- Seção de Importar/Exportar -->
         <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 mb-8">
             <h2 class="text-xl font-bold mb-4">Importar & Exportar Dados</h2>
             <div class="flex flex-wrap gap-4 items-center">
@@ -243,9 +269,11 @@
             </div>
         </div>
 
+        <!-- Área de renderização das placas -->
         <div id="placas"></div>
     </div>
 
+    <!-- Modal de Gerenciamento de Lojas -->
     <div id="modalGerenciamento" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50 overflow-y-auto">
         <div class="relative top-10 md:top-20 mx-auto p-5 border w-11/12 md:max-w-3xl shadow-lg rounded-md bg-white">
             <div class="flex justify-between items-center mb-4">
@@ -283,6 +311,7 @@
         </div>
     </div>
 
+    <!-- Modal de Edição Rápida da Placa -->
     <div id="modalEdicaoPlaca" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50 overflow-y-auto">
         <div class="relative top-20 mx-auto p-5 border w-11/12 md:max-w-xl shadow-lg rounded-md bg-white">
             <div class="flex justify-between items-center mb-4">
@@ -314,14 +343,24 @@
         </div>
     </div>
 
+    <!-- Modal para mensagens e confirmações -->
     <div id="messageBox" class="fixed inset-0 bg-gray-800 bg-opacity-60 hidden z-[100] flex items-center justify-center">
         <div class="relative mx-auto p-6 border w-full max-w-sm shadow-lg rounded-xl bg-white text-center">
             <h3 class="text-lg font-bold text-slate-800" id="messageTitle"></h3>
             <div class="py-4">
                 <p class="text-sm text-slate-600" id="messageContent"></p>
+                <!-- Spinner de Carregamento (opcional, pode ser removido) -->
                 <div id="loadingSpinner" class="hidden spinner mx-auto my-4"></div>
-                <p id="loadingJoke" class="hidden text-xs text-slate-500 italic mt-2"></p>
+                
+                <!-- --- NOVA BARRA DE PROGRESSO --- -->
+                <div id="progressContainer" class="hidden w-full mt-4">
+                    <div class="progress-bar-container">
+                        <div id="progressBar" class="progress-bar"></div>
+                    </div>
+                </div>
+
             </div>
+            <!-- Botões de Ação -->
             <div id="alertActions" class="mt-2">
                 <button id="messageOkBtn" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg w-full">OK</button>
             </div>
@@ -332,6 +371,7 @@
         </div>
     </div>
 
+    <!-- Bibliotecas JS -->
     <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -503,7 +543,8 @@
             messageTitle: document.getElementById('messageTitle'),
             messageContent: document.getElementById('messageContent'),
             loadingSpinner: document.getElementById('loadingSpinner'),
-            loadingJoke: document.getElementById('loadingJoke'),
+            progressContainer: document.getElementById('progressContainer'),
+            progressBar: document.getElementById('progressBar'),
             alertActions: document.getElementById('alertActions'),
             confirmActions: document.getElementById('confirmActions'),
             messageOkBtn: document.getElementById('messageOkBtn'),
@@ -520,15 +561,6 @@
             placeholderValue: "Selecione uma ou mais lojas...",
         });
         
-        const jokes = [
-            "Por que o programador terminou o namoro? Porque não havia mais commits.",
-            "Qual é o animal de estimação preferido de um programador? Um mouse.",
-            "O que um arquivo HTML disse a um arquivo CSS? 'Deixa-me em paz, eu cuido do conteúdo, tu cuidas da aparência!'",
-            "Hardware: a parte de um computador que se pode chutar.",
-            "Um programador entra num bar e pede uma bebida. Depois pede mais 1.0000000000000001 bebidas.",
-            "Existem 10 tipos de pessoas no mundo: as que entendem binário e as que não."
-        ];
-
         // --- Funções de Mensagens e Notificações ---
         let confirmCallback = null;
 
@@ -536,7 +568,7 @@
             dom.messageTitle.textContent = title;
             dom.messageContent.textContent = content;
             dom.loadingSpinner.classList.add('hidden');
-            dom.loadingJoke.classList.add('hidden');
+            dom.progressContainer.classList.add('hidden');
 
             if (type === 'alert') {
                 dom.alertActions.classList.remove('hidden');
@@ -548,9 +580,8 @@
             } else if (type === 'loading') {
                 dom.alertActions.classList.add('hidden');
                 dom.confirmActions.classList.add('hidden');
-                dom.loadingSpinner.classList.remove('hidden');
-                dom.loadingJoke.classList.remove('hidden');
-                dom.loadingJoke.textContent = jokes[Math.floor(Math.random() * jokes.length)];
+                dom.progressContainer.classList.remove('hidden');
+                dom.progressBar.style.width = '0%';
             }
 
             dom.messageBox.classList.remove('hidden');
@@ -751,7 +782,6 @@
             dom.formEdicaoLoja.value = `${placa.codigo} - ${placa.nome}`;
             dom.formEdicaoObservacao.value = placa.observacao || '';
             
-            // Atualiza o texto da checkbox
             const placasVisiveis = document.querySelectorAll('#placas .page').length;
             dom.aplicarEmTodosLabel.textContent = `Aplicar a todas as ${placasVisiveis} placas visíveis`;
             dom.aplicarEmTodosCheckbox.checked = false;
@@ -887,7 +917,7 @@
 
                     const novosDados = [];
                     for (let i = 1; i < lines.length; i++) {
-                        const values = lines[i].match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || [];
+                         const values = lines[i].match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || [];
                         if (values.length >= 3) {
                             novosDados.push({
                                 rota: values[0]?.trim().replace(/"/g, '') || '',
@@ -911,74 +941,112 @@
         }
 
         // ===================================================================
-        // FUNÇÃO DE EXPORTAÇÃO DE PDF - MELHORIAS APLICADAS AQUI
+        // FUNÇÃO DE EXPORTAÇÃO DE PDF - VERSÃO FINAL COM CORREÇÕES
         // ===================================================================
         async function exportarPDF() {
-            const placasParaExportar = dom.placasDiv.querySelectorAll(".page");
-            if (placasParaExportar.length === 0) {
+            const placasParaExportar = Array.from(dom.placasDiv.querySelectorAll(".page"));
+            const totalPlacas = placasParaExportar.length;
+
+            if (totalPlacas === 0) {
                 showMessage("Atenção", "Nenhuma placa para exportar com os filtros atuais.");
                 return;
             }
             
-            showMessage("Exportando PDF...", "Isso pode levar um momento, por favor aguarde...", 'loading');
+            showMessage("Exportando PDF...", "A preparar a exportação...", 'loading');
 
             const pdf = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
             const pdfWidth = pdf.internal.pageSize.getWidth();
             const pdfHeight = pdf.internal.pageSize.getHeight();
 
-            // NOVA FUNÇÃO: Ajusta dinamicamente a fonte para caber na página
+            // --- FUNÇÃO DE AJUSTE DE FONTE DEFINITIVA ---
             const ajustarFonte = (elemento, tamanhoMaxPt, larguraMaximaPx) => {
-                if (!elemento) return;
+                if (!elemento || !elemento.textContent) return;
+                
                 let tamanhoAtual = tamanhoMaxPt;
                 elemento.style.fontSize = `${tamanhoAtual}pt`;
-                // Continua diminuindo a fonte enquanto a largura do texto for maior que o limite
-                while (elemento.scrollWidth > larguraMaximaPx && tamanhoAtual > 10) {
-                    tamanhoAtual -= 5;
-                    elemento.style.fontSize = `${tamanhoAtual}pt`;
+
+                // Medição precisa usando um span temporário
+                const medidor = document.createElement('span');
+                medidor.style.fontFamily = getComputedStyle(elemento).fontFamily;
+                medidor.style.fontWeight = getComputedStyle(elemento).fontWeight;
+                medidor.style.fontSize = `${tamanhoAtual}pt`;
+                medidor.style.position = 'absolute';
+                medidor.style.visibility = 'hidden';
+                medidor.style.whiteSpace = 'nowrap';
+                medidor.textContent = elemento.textContent;
+                document.body.appendChild(medidor);
+
+                const larguraMedida = medidor.getBoundingClientRect().width;
+                
+                if (larguraMedida > larguraMaximaPx) {
+                    const ratio = larguraMaximaPx / larguraMedida;
+                    let novoTamanho = Math.floor(tamanhoAtual * ratio * 0.98); // 0.98 = margem de segurança
+                    tamanhoAtual = Math.max(10, novoTamanho); // Garante um tamanho mínimo de 10pt
                 }
+                
+                document.body.removeChild(medidor);
+                elemento.style.fontSize = `${tamanhoAtual}pt`;
             };
             
-            // Usando um loop `for...of` para garantir que as operações `async` funcionem corretamente
-            for (const [index, placaElement] of Array.from(placasParaExportar).entries()) {
-                // Atualiza a mensagem de progresso
-                dom.messageContent.textContent = `Preparando página ${index + 1} de ${placasParaExportar.length}...`;
-                
-                // Aplica estilos de impressão temporariamente
+            const processarPlaca = async (placaElement, index) => {
+                const progresso = ((index + 1) / totalPlacas) * 100;
+                dom.progressBar.style.width = `${progresso}%`;
+                dom.messageContent.textContent = `Processando página ${index + 1} de ${totalPlacas}...`;
+
                 placaElement.classList.remove('placa-preview');
                 placaElement.classList.add('print-mode');
                 
+                const rotaElement = placaElement.querySelector('.rota');
                 const lojaElement = placaElement.querySelector('.loja');
                 const obsElement = placaElement.querySelector('.observacao');
+
+                const originalColors = {
+                    rota: rotaElement.style.color,
+                    loja: lojaElement.style.color,
+                    obs: obsElement ? obsElement.style.color : ''
+                };
+
+                // Força a cor preta para a impressão
+                rotaElement.style.color = '#000000';
+                lojaElement.style.color = '#000000';
+                if (obsElement) obsElement.style.color = '#000000';
                 
-                // APLICA O AJUSTE DE FONTE DINÂMICO
-                // Tamanho máximo inicial e largura máxima (90% de 1123px)
+                // Aplica o ajuste de fonte
                 ajustarFonte(lojaElement, 90, 1010); 
                 ajustarFonte(obsElement, 60, 1010);
                 
-                // Força o navegador a recalcular os estilos antes de renderizar
-                await new Promise(resolve => setTimeout(resolve, 0));
-
                 const canvas = await html2canvas(placaElement, {
-                    scale: 2, // Aumenta a resolução para melhor qualidade
+                    scale: 2,
                     useCORS: true,
-                    backgroundColor: '#ffffff' // Garante fundo branco
+                    backgroundColor: '#ffffff'
                 });
                 
-                // Restaura os estilos originais da placa
+                // Restaura os estilos originais
                 placaElement.classList.add('placa-preview');
                 placaElement.classList.remove('print-mode');
+                rotaElement.style.color = originalColors.rota;
+                lojaElement.style.color = originalColors.loja;
+                if (obsElement) obsElement.style.color = originalColors.obs;
                 if (lojaElement) lojaElement.style.fontSize = '';
                 if (obsElement) obsElement.style.fontSize = '';
 
                 const imgData = canvas.toDataURL('image/png');
 
-                if (index > 0) pdf.addPage();
-                
+                if (index > 0) {
+                    pdf.addPage();
+                }
                 pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight, undefined, 'FAST');
-            }
+            };
 
-            pdf.save("placas_filtradas.pdf");
-            hideMessage();
+            (async function loop() {
+                for (let i = 0; i < totalPlacas; i++) {
+                    await new Promise(resolve => requestAnimationFrame(resolve));
+                    await processarPlaca(placasParaExportar[i], i);
+                }
+
+                pdf.save("placas_filtradas.pdf");
+                hideMessage();
+            })();
         }
         
         // --- Lógica de Inicialização e Atualização Geral ---
@@ -1014,7 +1082,6 @@
                     (confirmed) => {
                         if (confirmed) {
                             localStorage.removeItem('placasData');
-                            // Recarrega a página para usar os dados padrão do script
                             window.location.reload();
                         } else {
                             hideMessage();
@@ -1035,7 +1102,6 @@
                 else if (target.classList.contains("btn-deletar")) deletarItem(index);
             });
             
-            // Eventos da Edição Rápida de Placa
             dom.placasDiv.addEventListener('click', (e) => {
                 const target = e.target.closest('.btn-editar-placa');
                 if (target) {
